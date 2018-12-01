@@ -50,6 +50,7 @@ class Agent:
         return np.arctan(desired_y / desired_x)
 
     def get_avaialbe_moves(self):
+
         pass
 
     def get_move_price(self):
@@ -62,17 +63,28 @@ class Agent:
 
         pass
 
-    def clear_last_postionion_from_collision_map(self):
+    def mark_location_as_taken(self, location, collision_map, marking_value):
+        location_x, location_y = location
+        if (location_x < 0 or location_x > len(collision_map)):
+            return False
+        if (location_y < 0 or location_y > len(collision_map[0])):
+            return False
+        collision_map[location_x, location_y] = collision_map[location_x][location_x] + marking_value
+        return True
+
+    def clear_from_collision_map(self):
         pass
 
-    def addd_new_position_to_collision_map(self):
+    def add_position_to_collision_map(self):
+
         pass
 
     def move(self):
         pass
 
     def check_if_finish(self):
-        if self.end == self.start:
+
+        if self.end == self.current_pos:
             return True
         else:
             return False
