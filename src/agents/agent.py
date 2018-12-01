@@ -34,7 +34,7 @@ class Agent:
         # Return distance beetwen current location and desired location
         return (desired_x ** 2 + desired_y ** 2) ** 0.5
 
-    def get_desired__direction_engle(self):
+    def get_desired__direction_angle(self):
         # y/x=tg
         # alpha=arctg(y/x)
 
