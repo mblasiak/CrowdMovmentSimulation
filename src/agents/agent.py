@@ -8,6 +8,7 @@ class Agent:
     shortest_path = None
     next_position = 1
 
+
     def __init__(self, start, end, environment):
         self.start = start
         self.end = end
@@ -31,45 +32,5 @@ class Agent:
         else:
             return False
 
-
-
-
-    # def get_next_position(self):
-    #     direction = self.get_direction()
-    #     if -22.5 < direction <= 22.5:
-    #         print('x')
-    #         self.x += 1
-    #     elif 22.5 < direction <= 67.5:
-    #         print("x,y")
-    #         self.x += 1
-    #         self.y += 1
-    #     elif 67.5 < direction <= 112.5:
-    #         print('y')
-    #         self.y += 1
-    #     elif 112.5 < direction <= 157.5:
-    #         print("-x,y")
-    #         self.x -= 1
-    #         self.y += 1
-    #     elif 157.5 < direction <= 180 or -180 <= direction <= -157.5:
-    #         print("-x")
-    #         self.x -= 1
-    #     elif -157.5 < direction <= -112.5:
-    #         print("-x,-y")
-    #         self.x -= 1
-    #         self.y -= 1
-    #     elif -112.5 < direction <= -67.5:
-    #         print("-y")
-    #         self.y -= 1
-    #     elif -67.5 < direction <= 22.5:
-    #         print("x,-y")
-    #         self.x += 1
-    #         self.y -= 1
-
-    def check_if_done(self):
-        pass
-
-
-def bobo():
-    pass
 
 
