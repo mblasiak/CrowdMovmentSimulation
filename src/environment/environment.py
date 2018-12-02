@@ -4,8 +4,21 @@ from environment.environment_enum import Env
 from environment.a_star import astar
 
 
+def direction_map(environment, exit_points, step_size):
+    """ Return direction map with adjusted step_size"""
+    pass
+
+
+def get_obstacle_line_vertical(environment):
+    pass
+
+
+def get_obstacle_line_horizon(environment):
+    lines = []
+
+
 def map_environment(environment, exit_points):
-    """ Return mapped environment, each cord has next cord in 'fastest' path to exit """
+    """ Return mapped environment, each cord has next cord in 'fastest' path to exit (for step_size = 1)"""
 
     mapped_environment = copy.deepcopy(environment)
     for i in range(0, len(mapped_environment)):
