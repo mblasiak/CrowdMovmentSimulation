@@ -9,7 +9,9 @@ class Agent:
     def __init__(self, start_position, end_position, max_step, front_collision_size, rear_collision_size,
                  directions_map: DirectionMap(),
                  collision_map):
-
+        self.forward_move_angle = np.pi * (8 / 10)
+        self.speed_keeping_preference = 0.6
+        self.direction_keeping_preference = 1 - self.speed_keeping_preference
         self.start = start_position
         self.end = end_position
         self.current_pos = self.start
@@ -25,13 +27,41 @@ class Agent:
         self.current_facing_angle = self.direction_map.get_desired__direction_angle(self.current_pos)
 
     def get_available_moves(self):
-        pass
+        def chek_if_move_is_in_angle(move):
+            return abs(nav.get_angle_of_direction_between_points(self.current_pos,
+                                                                 move)) <= self.forward_move_angle() / 2
 
-    def get_move_price(self):
-        pass
+        current_x, current_y = self.current_pos
+        reduced_map = self.collision_map[current_x - self.max_step:current_x + self.max_step,
+                      current_y - self.max_step:current_y + self.max_step]
+        available_positions = filter(lambda x: x == 0, reduced_map)
+        available_positions_in_front = list(filter(lambda z: chek_if_move_is_in_angle(z), available_positions))
+        return available_positions_in_front
 
-    def get_best_move(self):
-        pass
+
+    def get_move_price(self, pos):
+        move_angle = nav.get_angle_of_direction_between_points(self.current_pos, pos)
+        move_step_lenght = nav.get_distance_beteween_points(self.current_pos, pos)
+        desired_angle = self.direction_map.get_desired__direction_angle(self.current_pos)
+        desired_step = self.direction_map.get_desired_step_size(self.current_pos)
+
+        return move_step_lenght / desired_step * self.speed_keeping_preference \
+               + move_angle / desired_angle * self.direction_keeping_preference
+
+    def get_best_move(self, moves):
+        if len(moves) == 0:
+            return self.current_pos
+        max = moves[0]
+        max_price = 0
+        for move in moves:
+            current_price = self.get_move_price(move)
+            if current_price > max_price:
+                max_price = current_price
+                max = move
+
+        if (max_price < 0.1):
+            return self.current_pos
+        return move
 
     def update_collision_map(self, value):
         current_x, current_y = self.current_pos
@@ -56,7 +86,12 @@ class Agent:
         self.update_collision_map(-1)
 
     def move(self):
-        pass
+        available_positions = self.get_available_moves()
+        best_pos = self.get_best_move(available_positions)
+        self.clear_position_to_collision_map()
+        self.current_pos = best_pos
+        self.update_collision_map()
+        self.update_facing_angle()
 
     def check_if_finish_has_been_reached(self):
 
