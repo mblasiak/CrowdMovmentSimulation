@@ -1,6 +1,6 @@
 class Agent:
 
-    def __init__(self, start_position, end_postion, max_step, front_collison_size, rear_collision_size, directions_map,
+    def __init__(self, start_position , end_postion, max_step, front_collison_size, rear_collision_size, directions_map,
                  collision_map):
 
         self.start = start_position
@@ -25,6 +25,8 @@ class Agent:
         pass
 
     def update_collision_map(self):
+
+
         pass
 
     def clear_position_to_collision_map(self):
