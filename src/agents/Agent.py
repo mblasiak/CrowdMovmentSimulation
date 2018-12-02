@@ -1,8 +1,3 @@
-import numpy as np
-
-from src.navigation.DirectionMap import DirectionMap
-
-
 class Agent:
 
     def __init__(self, start_position, end_postion, max_step, front_collison_size, rear_collision_size, directions_map,
