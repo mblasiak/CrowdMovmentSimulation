@@ -2,9 +2,13 @@ from enum import Enum
 
 
 class Line:
+
     def __init__(self, point_s, point_e):
         self.point_start = point_s
         self.point_end = point_e
+
+    def __repr__(self):
+        return "(" + str(self.point_start) + ", " + str(self.point_end) + ")"
 
     def intersect(self, line):
         """ returns true if two line intersect"""
@@ -20,13 +24,13 @@ class Line:
             return True
 
         # special case
-        if o1 == 0 and is_between(self.point_start, line.point_start, self.point_end):
+        if o1 == Intersect.COLLINEAR and is_between(self.point_start, line.point_start, self.point_end):
             return True
-        elif o2 == 0 and is_between(self.point_start, line.point_end, self.point_end):
+        elif o2 == Intersect.COLLINEAR and is_between(self.point_start, line.point_end, self.point_end):
             return True
-        elif o3 == 0 and is_between(line.point_start, self.point_start, line.point_end):
+        elif o3 == Intersect.COLLINEAR and is_between(line.point_start, self.point_start, line.point_end):
             return True
-        elif o4 == 0 and is_between(line.point_start, self.point_end, line.point_end):
+        elif o4 == Intersect.COLLINEAR and is_between(line.point_start, self.point_end, line.point_end):
             return True
         else:
             return False
@@ -61,3 +65,6 @@ class Point:
     def __init__(self, x, y):
         self.x = x
         self.y = y
+
+    def __repr__(self):
+        return "(" + str(self.x) + ", " + str(self.y) + ")"
