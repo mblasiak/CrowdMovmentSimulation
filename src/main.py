@@ -1,13 +1,7 @@
 from environment.a_star import astar
-from environment.environment import map_environment
-
-
-def print_maze(maze):
-    for j in range(0,len(maze)):
-        for i in range(0,len(maze[j])):
-            if maze[j][i] == 2:
-                maze[j][i] = 0
-
+from environment.environment import map_environment, get_obstacle_line_horizon, get_obstacle_line_vertical, \
+    direction_map
+from environment.line import Point, Line
 
 maze = [[0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
@@ -21,12 +15,19 @@ maze = [[0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
 
-for ele in map_environment(maze, [(9, 1),(9,2)]):
+print(get_obstacle_line_horizon(maze))
+print(get_obstacle_line_vertical(maze))
+
+p1 = Point(0, 0)
+p2 = Point(6, 0)
+
+p3 = Point(4, 0)
+
+l1 = Line(p1, p2)
+l2 = Line(p3, p3)
+
+for ele in map_environment(maze, [(9, 1)]):
     print(ele)
 
-
-
-
-
-
-
+for ele in direction_map(maze, [(9, 1)], 3):
+    print(ele)
