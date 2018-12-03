@@ -25,16 +25,6 @@ class TestDistance(unittest.TestCase):
                          "Distance between points")
 
 
-class TestDistance(unittest.TestCase):
-
-    def test_distane(self):
-        self.assertEqual(nav.get_distance_beteween_points((0, 0), (3, 4)), 5, "Distance between points")
-
-    def test_distane_cross(self):
-        self.assertEqual(nav.get_distance_beteween_points((2, 2), (3, 7)), (1 ** 2 + 5 ** 2) ** (1 / 2),
-                         "Distance between points")
-
-
 class TestAngle(unittest.TestCase):
     def test_angle_from_orgin(self):
         self.assertEqual(nav.get_angle_of_direction_between_points((0, 0), (1, 1)), np.pi / 4,
