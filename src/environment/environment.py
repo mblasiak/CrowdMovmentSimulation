@@ -1,8 +1,8 @@
 import copy
 
-from environment.environment_enum import Env
-from environment.a_star import astar
-from environment.line import Point, Line
+from src.environment.environment_enum import Env
+from src.environment.a_star import astar
+from src.environment.line import Point, Line
 
 
 def direction_map(environment, exit_points, step_size):
