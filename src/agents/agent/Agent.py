@@ -6,12 +6,15 @@ from src.collisions.collision_map_tools import mark_location_as_taken
 
 
 class Agent:
-    def __init__(self, start_position, end_position, max_step, front_collision_size, rear_collision_size,
+    def __init__(self, start_position: (int, int), end_position: (int, int), max_step: int, front_collision_size: float,
+                 rear_collision_size: float,
                  directions_map: DirectionMap(),
-                 collision_map):
+                 collision_map: [[(int, int)]]):
+
         self.forward_move_angle = np.pi * (8 / 10)
         self.speed_keeping_preference = 0.6
         self.direction_keeping_preference = 1 - self.speed_keeping_preference
+
         self.start = start_position
         self.end = end_position
         self.current_pos = self.start
@@ -38,8 +41,7 @@ class Agent:
         available_positions_in_front = list(filter(lambda z: chek_if_move_is_in_angle(z), available_positions))
         return available_positions_in_front
 
-
-    def get_move_price(self, pos):
+    def get_move_price(self, pos: (int, int)) -> float:
         move_angle = nav.get_angle_of_direction_between_points(self.current_pos, pos)
         move_step_lenght = nav.get_distance_beteween_points(self.current_pos, pos)
         desired_angle = self.direction_map.get_desired__direction_angle(self.current_pos)
