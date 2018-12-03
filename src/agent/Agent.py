@@ -8,7 +8,7 @@ from src.collisions.collision_map_tools import mark_location_as_taken
 class Agent:
     def __init__(self, start_position: (int, int), end_position: (int, int), max_step: int, front_collision_size: float,
                  rear_collision_size: float,
-                 directions_map: DirectionMap(),
+                 directions_map: DirectionMap,
                  collision_map: [[(int, int)]]):
 
         self.forward_move_angle = np.pi * (8 / 10)
