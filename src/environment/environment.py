@@ -22,7 +22,7 @@ def direction_map(environment, exit_points, step_size):
             if mapped_environment[y][x] is None:
                 fastest_paths = []
                 for point in exit_points:
-                    fastest_paths.append(astar(environment, (y, x), point))
+                    fastest_paths.append(astar(environment, (y, x), (point.y, point.x)))
 
                 shortest_path = fastest_paths[0]
                 distance_of_shortest_path = path_distance(shortest_path)
@@ -115,11 +115,9 @@ def map_environment(environment, exit_points):
         for x in range(0, len(environment[y])):
             if mapped_environment[y][x] is None:
                 fastest_paths = []
-                print("befor astar")
                 for point in exit_points:
                     fastest_paths.append(astar(environment, (y, x), point))
 
-                print("after astar")
                 shortest_path = fastest_paths[0]
                 distance_of_shortest_path = path_distance(shortest_path)
                 for path in fastest_paths:

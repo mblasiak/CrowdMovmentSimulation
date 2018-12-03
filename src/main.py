@@ -29,5 +29,5 @@ l2 = Line(p3, p3)
 for ele in map_environment(maze, [(9, 1)]):
     print(ele)
 
-for ele in direction_map(maze, [(9, 1)], 3):
+for ele in direction_map(maze, [Point(1, 9), Point(2, 9)], 3):
     print(ele)
