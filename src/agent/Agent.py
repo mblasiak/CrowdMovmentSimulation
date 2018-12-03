@@ -1,7 +1,7 @@
 import numpy as np
 
-import src.agents.navigation.navigator.navigator as nav
-from src.agents.navigation.direction_map.DirectionMap import DirectionMap
+import src.navigator.navigator as nav
+from src.direction_map import DirectionMap
 from src.collisions.collision_map_tools import mark_location_as_taken
 
 
