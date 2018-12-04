@@ -59,7 +59,7 @@ def direction_map(environment, exit_points, step_size):
                                 x_l = shortest_path[i + possible_step][1]
                                 y_l = shortest_path[i + possible_step][0]
                                 direction_point = Point(x_l, y_l)
-                                mapped_environment[current_y][current_x] = direction_point
+                                mapped_environment[current_y][current_x] = (x_l,y)
                                 break
     return mapped_environment
 
