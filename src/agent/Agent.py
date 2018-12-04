@@ -30,13 +30,15 @@ class Agent:
         self.current_facing_angle = self.direction_map.get_desired__direction_angle(self.current_pos)
 
     def get_available_moves(self):
+        # TODO refactor this function
         def chek_if_move_is_in_angle(move):
             return abs(nav.get_angle_of_direction_between_points(self.current_pos,
-                                                                 move)) <= self.forward_move_angle() / 2
-
+                                                                 move)-self.current_facing_angle) <= self.forward_move_angle() / 2
+        #TODO this cuting out of array doesnt work
         current_x, current_y = self.current_pos
-        reduced_map = self.collision_map[current_x - self.max_step:current_x + self.max_step,
-                      current_y - self.max_step:current_y + self.max_step]
+        reduced_map = self.collision_map[current_x - self.max_step:current_x + self.max_step][
+                      current_y - self.max_step: current_y + self.max_step]
+
         available_positions = filter(lambda x: x == 0, reduced_map)
         available_positions_in_front = list(filter(lambda z: chek_if_move_is_in_angle(z), available_positions))
         return available_positions_in_front
@@ -51,6 +53,8 @@ class Agent:
                + move_angle / desired_angle * self.direction_keeping_preference
 
     def get_best_move(self, moves):
+
+
         if len(moves) == 0:
             return self.current_pos
         max = moves[0]
@@ -88,12 +92,15 @@ class Agent:
         self.update_collision_map(-1)
 
     def move(self):
+        print("{}--->".format(self.current_pos), end="")
         available_positions = self.get_available_moves()
+        print(available_positions)
         best_pos = self.get_best_move(available_positions)
         self.clear_position_to_collision_map()
         self.current_pos = best_pos
-        self.update_collision_map()
+        self.add_position_to_collision_map()
         self.update_facing_angle()
+        print("{}".format(self.current_pos))
 
     def check_if_finish_has_been_reached(self):
 
