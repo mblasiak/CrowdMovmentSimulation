@@ -14,7 +14,7 @@ class DirectionMap:
         return self.direction_map[current_x][current_y]
 
     def get_desired__direction(self, current_pos: (int, int)):
-        return self.get_next_desired_location(current_pos) - current_pos
+        return tuple(np.subtract(self.get_next_desired_location(current_pos),current_pos))
 
     def get_desired_step_size(self, current_pos: (int, int)):
         (desired_x, desired_y) = self.get_desired__direction(current_pos)

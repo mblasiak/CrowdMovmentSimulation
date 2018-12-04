@@ -9,7 +9,7 @@ def mark_location_as_taken(location: (int, int), collision_map, marking_value: i
         return False
     if location_y < 0 or location_y > len(collision_map[0]):
         return False
-    collision_map[location_x, location_y] = collision_map[location_x][location_x] + marking_value
+    collision_map[location_x][ location_y] = collision_map[location_x][location_y] + marking_value
     return True
 
 
