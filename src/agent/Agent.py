@@ -30,18 +30,17 @@ class Agent:
         self.current_facing_angle = self.direction_map.get_desired__direction_angle(self.current_pos)
 
     def get_available_moves(self):
-        # TODO refactor this function
-        def chek_if_move_is_in_angle(move):
-            return abs(nav.get_angle_of_direction_between_points(self.current_pos,
-                                                                 move)-self.current_facing_angle) <= self.forward_move_angle() / 2
-        #TODO this cuting out of array doesnt work
-        current_x, current_y = self.current_pos
-        reduced_map = self.collision_map[current_x - self.max_step:current_x + self.max_step][
-                      current_y - self.max_step: current_y + self.max_step]
+        available_points = []
+        (a_x, a_y) = self.current_pos
 
-        available_positions = filter(lambda x: x == 0, reduced_map)
-        available_positions_in_front = list(filter(lambda z: chek_if_move_is_in_angle(z), available_positions))
-        return available_positions_in_front
+        for x in range(a_x - self.max_step, a_x + self.max_step):
+            for y in range(a_y - self.max_step, a_y + self.max_step):
+                distance = nav.get_distance_beteween_points(self.current_pos, (x, y))
+                angle = nav.get_angle_of_direction_between_points(self.current_pos, (x, y))
+                if distance <= self.max_step and abs(angle - self.current_facing_angle) <= self.forward_move_angle / 2:
+                    available_points.append((x, y))
+
+        return available_points
 
     def get_move_price(self, pos: (int, int)) -> float:
         move_angle = nav.get_angle_of_direction_between_points(self.current_pos, pos)
@@ -53,10 +52,14 @@ class Agent:
                + move_angle / desired_angle * self.direction_keeping_preference
 
     def get_best_move(self, moves):
-
+        desired_move = self.direction_map.get_desired__direction(self.current_pos)
+        if self.collision_map[desired_move[0]][desired_move[1]] == 0:
+            return desired_move
 
         if len(moves) == 0:
             return self.current_pos
+        #TODO Refactor code under
+
         max = moves[0]
         max_price = 0
         for move in moves:
