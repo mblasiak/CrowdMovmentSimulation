@@ -2,7 +2,7 @@ import numpy as np
 
 import src.navigator.navigator as nav
 from src.direction_map import DirectionMap
-from src.collisions.collision_map_tools import mark_location_as_taken
+from src.collisions.collision_map_tools import mark_location
 
 
 class Agent:
@@ -82,11 +82,11 @@ class Agent:
                 # Mark field if is in range and doesnt exceed angle diffrence from facing angle
                 if distnce_to_point <= self.front_collision_size and abs(
                         angle_of_point_direction - self.current_facing_angle) <= np.pi / 2:
-                    mark_location_as_taken((x, y), self.collision_map, value)
+                    mark_location((x, y), self.collision_map, value)
 
                 if distnce_to_point <= self.rear_collision_size and abs(
                         angle_of_point_direction - self.current_facing_angle) >= np.pi:
-                    mark_location_as_taken((x, y), self.collision_map, value)
+                    mark_location((x, y), self.collision_map, value)
 
     def clear_position_to_collision_map(self):
         self.update_collision_map(1)
