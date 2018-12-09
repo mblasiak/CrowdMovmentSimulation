@@ -12,12 +12,12 @@ class DirectionMap:
         (current_x, current_y) = current_pos
         return self.direction_map[current_x][current_y]
 
-    def get_desired__direction(self, current_pos: (int, int)):
+    def get_direction(self, current_pos: (int, int)):
         return nav.get_direction_to_another_point(current_pos, self.get_next_position(current_pos))
 
-    def get_desired_step_size(self, current_pos: (int, int)):
+    def get_step_size(self, current_pos: (int, int)):
         return nav.get_distance_beteween_points(current_pos, self.get_next_position(current_pos))
 
-    def get_desired__direction_angle(self, current_pos: (int, int)):
-        (desired_x, desired_y) = self.get_desired__direction(current_pos)
+    def get_angle(self, current_pos: (int, int)):
+        (desired_x, desired_y) = self.get_direction(current_pos)
         return np.arctan2(desired_y, desired_x)

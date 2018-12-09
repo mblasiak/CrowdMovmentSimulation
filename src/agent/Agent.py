@@ -24,10 +24,10 @@ class Agent:
         self.rear_collision_size = rear_collision_size
         self.direction_map = directions_map
         self.collision_map = collision_map
-        self.current_facing_angle = directions_map.get_desired__direction_angle(self.current_pos)
+        self.current_facing_angle = directions_map.get_angle(self.current_pos)
 
     def update_facing_angle(self):
-        self.current_facing_angle = self.direction_map.get_desired__direction_angle(self.current_pos)
+        self.current_facing_angle = self.direction_map.get_angle(self.current_pos)
 
     def get_available_moves(self):
         available_points = []
@@ -45,14 +45,14 @@ class Agent:
     def get_move_price(self, pos: (int, int)) -> float:
         move_angle = nav.get_angle_of_direction_between_points(self.current_pos, pos)
         move_step_lenght = nav.get_distance_beteween_points(self.current_pos, pos)
-        desired_angle = self.direction_map.get_desired__direction_angle(self.current_pos)
-        desired_step = self.direction_map.get_desired_step_size(self.current_pos)
+        desired_angle = self.direction_map.get_angle(self.current_pos)
+        desired_step = self.direction_map.get_step_size(self.current_pos)
 
         return move_step_lenght / desired_step * self.speed_keeping_preference \
                + move_angle / desired_angle * self.direction_keeping_preference
 
     def get_best_move(self, moves):
-        desired_move = self.direction_map.get_desired__direction(self.current_pos)
+        desired_move = self.direction_map.get_direction(self.current_pos)
         if self.collision_map[desired_move[0]][desired_move[1]] == 0:
             return desired_move
 

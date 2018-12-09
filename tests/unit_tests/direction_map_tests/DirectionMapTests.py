@@ -40,7 +40,7 @@ class GettingDirectionTests(unittest.TestCase):
         direction_map = DirectionMap(self.directions)
 
         direction = nav.get_direction_to_another_point((2, 5), (12, 12))
-        self.assertEqual(direction, direction_map.get_desired__direction((2, 5)))
+        self.assertEqual(direction, direction_map.get_direction((2, 5)))
 
 
 class GettingStepSizeTests(unittest.TestCase):
@@ -53,7 +53,7 @@ class GettingStepSizeTests(unittest.TestCase):
         direction_map = DirectionMap(self.directions)
 
         step = nav.get_distance_beteween_points((2, 5), (12, 12))
-        self.assertEqual(step, direction_map.get_desired_step_size((2, 5)))
+        self.assertEqual(step, direction_map.get_step_size((2, 5)))
 
 
 class GetingAngleTest(unittest.TestCase):
@@ -66,4 +66,4 @@ class GetingAngleTest(unittest.TestCase):
         direction_map = DirectionMap(self.directions)
 
         angle = nav.get_angle_of_direction_between_points((2, 5), (12, 12))
-        self.assertEqual(angle, direction_map.get_desired__direction_angle((2, 5)))
+        self.assertEqual(angle, direction_map.get_angle((2, 5)))
