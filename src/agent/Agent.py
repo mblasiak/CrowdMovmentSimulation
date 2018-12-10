@@ -52,21 +52,23 @@ class Agent:
                + move_angle / desired_angle * self.direction_keeping_preference
 
     def get_best_move(self, moves):
+
         desired_move = self.direction_map.get_direction(self.current_pos)
+
         if self.collision_map[desired_move[0]][desired_move[1]] == 0:
             return desired_move
 
         if len(moves) == 0:
             return self.current_pos
-        #TODO Refactor code under
+        # TODO Refactor code under
 
-        max = moves[0]
+        maxi = moves[0]
         max_price = 0
         for move in moves:
             current_price = self.get_move_price(move)
             if current_price > max_price:
                 max_price = current_price
-                max = move
+                maxi = move
 
         if (max_price < 0.1):
             return self.current_pos
@@ -75,17 +77,23 @@ class Agent:
     def update_collision_map(self, value):
         current_x, current_y = self.current_pos
         # update map only in neighbourhood of position
-        for x in range(current_x - self.front_collision_size, current_x + self.front_collision_size):
-            for y in range(current_y - self.front_collision_size, current_y + self.front_collision_size):
-                distnce_to_point = nav.get_distance_beteween_points(self.current_pos, (x, y))
-                angle_of_point_direction = nav.get_angle_of_direction_between_points(self.current_pos, (x, y))
+        front_collision = self.front_collision_size
+        rear_collision = self.rear_collision_size
+        for x in range(current_x - front_collision, current_x + front_collision):
+
+            for y in range(current_y - front_collision, current_y + front_collision):
+
+                distance = nav.get_distance_beteween_points(self.current_pos, (x, y))
+                angle = nav.get_angle_of_direction_between_points(self.current_pos, (x, y))
+
                 # Mark field if is in range and doesnt exceed angle diffrence from facing angle
-                if distnce_to_point <= self.front_collision_size and abs(
-                        angle_of_point_direction - self.current_facing_angle) <= np.pi / 2:
+
+                if distance <= front_collision and abs(
+                        angle - self.current_facing_angle) <= np.pi / 2:
                     mark_location((x, y), self.collision_map, value)
 
-                if distnce_to_point <= self.rear_collision_size and abs(
-                        angle_of_point_direction - self.current_facing_angle) >= np.pi:
+                if distance <= rear_collision and abs(
+                        angle - self.current_facing_angle) >= np.pi:
                     mark_location((x, y), self.collision_map, value)
 
     def clear_position_to_collision_map(self):
