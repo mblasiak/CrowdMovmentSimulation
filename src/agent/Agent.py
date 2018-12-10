@@ -24,10 +24,10 @@ class Agent:
         self.rear_collision_size = rear_collision_size
         self.direction_map = directions_map
         self.collision_map = collision_map
-        self.current_facing_angle = directions_map.get_angle(self.current_pos)
+        self.facing_angle = directions_map.get_angle(self.current_pos)
 
     def update_facing_angle(self):
-        self.current_facing_angle = self.direction_map.get_angle(self.current_pos)
+        self.facing_angle = self.direction_map.get_angle(self.current_pos)
 
     def get_available_moves(self):
         available_points = []
@@ -37,7 +37,7 @@ class Agent:
             for y in range(a_y - self.max_step, a_y + self.max_step):
                 distance = nav.get_distance_beteween_points(self.current_pos, (x, y))
                 angle = nav.get_angle_of_direction_between_points(self.current_pos, (x, y))
-                if distance <= self.max_step and abs(angle - self.current_facing_angle) <= self.forward_move_angle / 2:
+                if distance <= self.max_step and abs(angle - self.facing_angle) <= self.forward_move_angle / 2:
                     available_points.append((x, y))
 
         return available_points
@@ -89,11 +89,11 @@ class Agent:
                 # Mark field if is in range and doesnt exceed angle diffrence from facing angle
 
                 if distance <= front_collision and abs(
-                        angle - self.current_facing_angle) <= np.pi / 2:
+                        angle - self.facing_angle) <= np.pi / 2:
                     mark_location((x, y), self.collision_map, value)
 
                 if distance <= rear_collision and abs(
-                        angle - self.current_facing_angle) >= np.pi:
+                        angle - self.facing_angle) >= np.pi:
                     mark_location((x, y), self.collision_map, value)
 
     def clear_position_to_collision_map(self):
