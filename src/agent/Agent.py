@@ -14,7 +14,7 @@ class Agent:
         self.forward_move_angle = np.pi * (8 / 10)
         self.speed_keeping_preference = 0.6
         self.direction_keeping_preference = 1 - self.speed_keeping_preference
-        self.minmal_move_price=0.1
+        self.minmal_move_price = 0.05
 
         self.start = start_position
         self.end = end_position
@@ -26,6 +26,7 @@ class Agent:
         self.direction_map = directions_map
         self.collision_map = collision_map
         self.facing_angle = directions_map.get_angle(self.current_pos)
+        self.move_counter = 0
 
     def update_facing_angle(self):
         self.facing_angle = self.direction_map.get_angle(self.current_pos)
@@ -51,12 +52,12 @@ class Agent:
         desired_angle = self.direction_map.get_angle(self.current_pos)
         desired_step = self.direction_map.get_step_size(self.current_pos)
 
-        return move_step_length / desired_step * self.speed_keeping_preference \
-               + move_angle / desired_angle * self.direction_keeping_preference
+        price = desired_step / move_step_length * self.speed_keeping_preference \
+                + move_angle / desired_angle * self.direction_keeping_preference
+        return price
 
     def get_best_move(self, moves):
-
-        desired_move = self.direction_map.get_direction(self.current_pos)
+        desired_move = self.direction_map.get_next_position(self.current_pos)
 
         if self.collision_map[desired_move[0]][desired_move[1]] == 0:
             return desired_move
@@ -64,12 +65,11 @@ class Agent:
         if len(moves) == 0:
             return self.current_pos
 
-        maxi = max(moves, key=self.get_best_move)
-        if maxi>=self.minmal_move_price:
+        maxi = max(moves, key=lambda z: self.get_move_price(z))
+        if self.get_move_price(maxi) >= self.minmal_move_price:
             return maxi
         else:
             return self.current_pos
-
 
     def update_collision_map(self, value):
         current_x, current_y = self.current_pos
@@ -81,10 +81,10 @@ class Agent:
 
                 distance = nav.get_distance_beteween_points(self.current_pos, (x, y))
                 angle = nav.get_angle_of_direction_between_points(self.current_pos, (x, y))
-                angle_diff=abs(angle-self.facing_angle)
+                angle_diff = abs(angle - self.facing_angle)
 
                 # Mark field if is in range and doesnt exceed angle diffrence from facing angle
-                if angle_diff in range(np.pi / 2, (np.pi * 3 / 4)):
+                if np.pi / 2 < angle_diff < (np.pi * 3 / 4):
                     if distance <= rear_collision:
                         mark_location((x, y), self.collision_map, value)
 
@@ -99,20 +99,23 @@ class Agent:
         self.update_collision_map(-1)
 
     def move(self):
-        print("{}--->".format(self.current_pos), end="")
+        if self.move_counter == 0:
+            self.add_position_to_collision_map()
+
+        self.clear_position_to_collision_map()
         available_positions = self.get_available_moves()
 
-        print(available_positions)
-
         best_pos = self.get_best_move(available_positions)
-        self.clear_position_to_collision_map()
+
         self.current_pos = best_pos
         self.add_position_to_collision_map()
         self.update_facing_angle()
 
-        print("{}".format(self.current_pos))
         if self.check_if_finish_has_been_reached():
-            print("ON FINISH")
+            return 1
+
+        self.move_counter = self.move_counter + 1
+        return 0
 
     def check_if_finish_has_been_reached(self):
 
