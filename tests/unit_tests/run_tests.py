@@ -15,9 +15,9 @@ if __name__ == '__main__':
     tool_1=tools.ObstacleAdding
     tool_2=tools.TestMarking
 
-    dirmap_1=dm.GetingAngleTest
-    dirmap_2=dm.GettingDirectionTests
-    dirmap_3=dm.GettingPosTests
-    dirmap_4=dm.GettingStepSizeTests
+    directmap_1=dm.GetingAngleTest
+    directmap_2=dm.GettingDirectionTests
+    directmap_3=dm.GettingPosTests
+    directmap_4=dm.GettingStepSizeTests
 
     unittest.main()
