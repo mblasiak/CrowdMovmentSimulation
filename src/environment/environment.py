@@ -1,11 +1,12 @@
 import copy
+import numpy
 
 from .environment_enum import Env
-from .a_star import astar
+from .a_star import a_star, diagonal_distance_heuristics
 from .line import Point, Line
 
 
-def direction_map(environment, exit_points, step_size):
+def direction_map(environment, exit_points, step_size):  # (Point,Env)[][] / (int[][], Point[], int)
     """ Return direction map with adjusted step_size"""
     mapped_environment = copy.deepcopy(environment)
     for i in range(0, len(mapped_environment)):
@@ -20,20 +21,37 @@ def direction_map(environment, exit_points, step_size):
     for y in range(0, len(environment)):
         for x in range(0, len(environment[y])):
             if mapped_environment[y][x] is None:
-                fastest_paths = []
+                # TODO instead of counting a_star for each exit point we can choose best one with heuristic distance
+                # TODO I done it but its not best solution,
+                """ fastest_paths = [] """
+                closest_point = exit_points[0]
+                shortest_distance = diagonal_distance_heuristics(Point(x, y), closest_point)
                 for point in exit_points:
-                    fastest_paths.append(astar(environment, (y, x), point))
+                    distance = diagonal_distance_heuristics(Point(x,y), point)
+                    if distance < shortest_distance:
+                        shortest_distance = distance
+                        closest_point = point
+                    # fastest_paths.append(a_star(environment, Point(x, y), point))
 
-                shortest_path = fastest_paths[0]
-                distance_of_shortest_path = path_distance(shortest_path)
-                for path in fastest_paths:
-                    if distance_of_shortest_path > path_distance(path):
-                        shortest_path = path
-                        distance_of_shortest_path = path_distance(path)
+                shortest_path = a_star(environment, Point(x, y), closest_point)
+
+                """ we can skip this since we are getting closest point earlier """
+                # distance_of_shortest_path = path_distance(shortest_path)
+                # for path in fastest_paths:
+                #     if distance_of_shortest_path > path_distance(path):
+                #         shortest_path = path
+                #         distance_of_shortest_path = path_distance(path)
+                # TODO end of TODO
 
                 for i in range(0, len(shortest_path)):
-                    current_x = shortest_path[i][1]
-                    current_y = shortest_path[i][0]
+
+                    current_x = shortest_path[i].x
+                    current_y = shortest_path[i].y
+
+                    #  check if it is pointless to continue mapping
+                    if mapped_environment[current_y][current_x] is not None:
+                        break
+
                     if i == len(shortest_path)-1:
                         mapped_environment[current_y][current_x] = Env.EXIT
                     else:
@@ -41,12 +59,13 @@ def direction_map(environment, exit_points, step_size):
                         possible_step_is_correct = True
                         while possible_step >= 1:
                             if i+possible_step < len(shortest_path):
-                                point_to_go = Point(shortest_path[i + possible_step][1], shortest_path[i + possible_step][0])
+                                point_to_go = Point(shortest_path[i + possible_step].x, shortest_path[i + possible_step].y)
                             else:
                                 last_index = len(shortest_path)-1
-                                point_to_go = Point(shortest_path[last_index][1], shortest_path[last_index][0])
+                                point_to_go = Point(shortest_path[last_index].x, shortest_path[last_index].y)
                                 possible_step = last_index - i
 
+                            # TODO we can skipp it if step is 1 or 2
                             line = Line(Point(current_x, current_y), point_to_go)
                             for line_obstacle in obstacles:
                                 if line.intersect(line_obstacle):
@@ -56,15 +75,12 @@ def direction_map(environment, exit_points, step_size):
                                 else:
                                     possible_step_is_correct = True
                             if possible_step_is_correct is True:
-                                x_l = shortest_path[i + possible_step][1]
-                                y_l = shortest_path[i + possible_step][0]
-                                direction_point = Point(x_l, y_l)
-                                mapped_environment[current_y][current_x] = direction_point
+                                mapped_environment[current_y][current_x] = point_to_go
                                 break
     return mapped_environment
 
 
-def get_obstacle_line_vertical(environment):
+def get_obstacle_line_vertical(environment):  # Line[] / int[][]
     is_line_started = False
     lines = []
     for i in range(0, len(environment[0])):
@@ -82,7 +98,7 @@ def get_obstacle_line_vertical(environment):
     return lines
 
 
-def get_obstacle_line_horizon(environment):
+def get_obstacle_line_horizon(environment):  # Line[] / int[][]
     is_line_started = False
     lines = []
     for i in range(0, len(environment)):
@@ -100,50 +116,11 @@ def get_obstacle_line_horizon(environment):
     return lines
 
 
-def map_environment(environment, exit_points):
-    """ Return mapped environment, each cord has next cord in 'fastest' path to exit (for step_size = 1)"""
-    """ its should be deleted because we have direciton map, but i will delete it in next push """
-    mapped_environment = copy.deepcopy(environment)
-    for i in range(0, len(mapped_environment)):
-        for j in range(0, len(mapped_environment[i])):
-            if mapped_environment[i][j] == 1:
-                mapped_environment[i][j] = Env.OBSTACLE
-            else:
-                mapped_environment[i][j] = None
-
-    for y in range(0, len(environment)):
-        for x in range(0, len(environment[y])):
-            if mapped_environment[y][x] is None:
-                fastest_paths = []
-                print("befor astar")
-                for point in exit_points:
-                    fastest_paths.append(astar(environment, (y, x), point))
-
-                print("after astar")
-                shortest_path = fastest_paths[0]
-                distance_of_shortest_path = path_distance(shortest_path)
-                for path in fastest_paths:
-                    if distance_of_shortest_path > path_distance(path):
-                        shortest_path = path
-                        distance_of_shortest_path = path_distance(path)
-
-                for i in range(0, len(shortest_path)):
-                    current_x = shortest_path[i][1]
-                    current_y = shortest_path[i][0]
-                    if i == len(shortest_path)-1:
-                        mapped_environment[current_y][current_x] = Env.EXIT
-                    else:
-                        mapped_environment[current_y][current_x] = shortest_path[i+1]
-
-    return mapped_environment
-
-
 def path_distance(path):
-
     distance = 0
     for i in range(1, len(path)):
-        if path[i][1] != path[i-1][1] and path[i][0] != path[i-1][0]:
-            distance += 14  # approximation of sqrt(2) * 10 (*10 so it's integer(14) not float(1,4))
+        if path[i].x != path[i-1].x and path[i].y != path[i-1].y:
+            distance += numpy.sqrt(2)
         else:
-            distance += 10
+            distance += 1
     return distance
