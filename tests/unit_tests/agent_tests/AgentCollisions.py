@@ -9,6 +9,7 @@ from src.direction_map.DirectionMap import DirectionMap
 from tests.tesing_tools.list_comparator.compare_lists import compare_lists
 from tests.tesing_tools.print_list_diffrances.print_list_diffrances import print_2D_list_difrances
 
+
 class AgentCollision(unittest.TestCase):
 
     def setUp(self):
@@ -55,6 +56,30 @@ class AgentCollision(unittest.TestCase):
 
         self.expected_collisions[7][5] = 1
 
-        print_2D_list_difrances(self.expected_collisions,self.collisions)
+        print_2D_list_difrances(self.expected_collisions, self.collisions)
+
+        self.assertTrue(compare_lists(self.expected_collisions, self.collisions))
+
+    def test_agent_marks_propper_fields_facing_up(self):
+        self.agent.facing_angle = np.pi / 2
+
+        self.agent.add_position_to_collision_map()
+
+        self.expected_collisions[5][4] = 1
+        self.expected_collisions[5][5] = 1
+        self.expected_collisions[5][6] = 1
+        self.expected_collisions[5][7] = 1
+
+        self.expected_collisions[6][5] = 1
+        self.expected_collisions[6][6] = 1
+
+        self.expected_collisions[7][5] = 1
+
+        self.expected_collisions[4][5] = 1
+        self.expected_collisions[4][6] = 1
+
+        self.expected_collisions[3][5] = 1
+
+        print_2D_list_difrances(self.expected_collisions, self.collisions)
 
         self.assertTrue(compare_lists(self.expected_collisions, self.collisions))
