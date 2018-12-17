@@ -1,12 +1,12 @@
-def print_2D_list_difrances(list_1: [[]], list_2: [[]]):
-    if len(list_1) != len(list_2):
+def print_2D_list_difrances(excpected_list: [[]], given_list: [[]]):
+    if len(excpected_list) != len(given_list):
         print("List row(s)")
         return
-    for x in range(0, len(list_1)):
-        if len(list_1[x]) != len(list_2[x]):
+    for x in range(0, len(excpected_list)):
+        if len(excpected_list[x]) != len(given_list[x]):
             print("List column(s) not equal")
 
-        for y in range(0, len(list_1[0])):
-            if list_1[x][y] != list_2[x][y]:
+        for y in range(0, len(excpected_list[0])):
+            if excpected_list[x][y] != given_list[x][y]:
                 print("Position of miss match : {} {}".format(x, y))
-                print("Excpected value {}  given value {}".format(list_1[x][y], list_2[x][y]))
+                print("Excpected value {}  given value {}".format(excpected_list[x][y], given_list[x][y]))
