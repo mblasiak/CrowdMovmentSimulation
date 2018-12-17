@@ -120,7 +120,7 @@ if not window:
 
 camera_position = [0.5, 0.5, 0]
 
-maze = load_map_from_file("map01.txt")
+maze = load_map_from_file("dobry_maze100na100.txt")
 
 free_color = [25, 25, 25]
 collision_color = [128, 0, 0]
