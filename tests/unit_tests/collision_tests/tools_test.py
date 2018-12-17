@@ -4,7 +4,7 @@ import unittest
 import numpy as np
 
 from src.collisions.collision_map_tools import mark_squere_obstacle, mark_location, mark_circle_obstacle
-
+from tests.tesing_tools.list_comparator.compare_lists import compare_lists
 
 class TestMarking(unittest.TestCase):
 
@@ -18,7 +18,7 @@ class TestMarking(unittest.TestCase):
 
         mark_location((2, 2), self.collision_map, 1)
 
-        self.assertTrue(compare_elements(desired_result, self.collision_map))
+        self.assertTrue(compare_lists(desired_result, self.collision_map))
 
     def test_mark_far_position(self):
         desired_result = copy.deepcopy(self.collision_map)
@@ -26,7 +26,7 @@ class TestMarking(unittest.TestCase):
 
         mark_location((35, 88), self.collision_map, 1)
 
-        self.assertTrue(compare_elements(desired_result, self.collision_map))
+        self.assertTrue(compare_lists(desired_result, self.collision_map))
 
     def test_doesnt_allways_equal(self):
         desired_result = copy.deepcopy(self.collision_map)
@@ -34,7 +34,7 @@ class TestMarking(unittest.TestCase):
 
         mark_location((30, 88), self.collision_map, 1)
 
-        self.assertFalse(compare_elements(desired_result, self.collision_map))
+        self.assertFalse(compare_lists(desired_result, self.collision_map))
 
     def test_return_true_when_marking_in_range(self):
         self.assertTrue(mark_location((30, 88), self.collision_map, 1))
@@ -47,7 +47,7 @@ class TestMarking(unittest.TestCase):
 
         mark_location((300, 88), self.collision_map, 1)
 
-        self.assertTrue(compare_elements(desired_result, self.collision_map))
+        self.assertTrue(compare_lists(desired_result, self.collision_map))
 
 
 class ObstacleAdding(unittest.TestCase):
@@ -72,7 +72,7 @@ class ObstacleAdding(unittest.TestCase):
 
         mark_squere_obstacle((2, 2), 2, self.collision_map, 1)
 
-        self.assertTrue(compare_elements(desired_result, self.collision_map))
+        self.assertTrue(compare_lists(desired_result, self.collision_map))
 
     def test_marking_circle(self):
         desired_result = copy.deepcopy(self.collision_map)
@@ -86,14 +86,7 @@ class ObstacleAdding(unittest.TestCase):
         desired_result[3][2] = 1
 
         mark_circle_obstacle((2, 2), 1, self.collision_map, 1)
-        self.assertTrue(compare_elements(desired_result, self.collision_map))
+        self.assertTrue(compare_lists(desired_result, self.collision_map))
 
 
-def compare_elements(a, b):
-    for x in range(0, len(a)):
-        for y in range(0, len(a[1])):
 
-            if (a[x][y]) != (b[x][y]):
-                return False
-
-    return True

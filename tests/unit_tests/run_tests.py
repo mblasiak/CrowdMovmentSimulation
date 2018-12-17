@@ -2,7 +2,7 @@ import unittest
 import tests.unit_tests.navigator_tests.NavigationTest as nav
 import tests.unit_tests.collision_tests.tools_test as tools
 import tests.unit_tests.direction_map_tests.DirectionMapTests as dm
-
+import tests.unit_tests.agent_tests.AgentCollisions as ac
 #Run this file to run all unit tests
 #Other python running methods aren't much more better in my opinion
 
@@ -19,5 +19,7 @@ if __name__ == '__main__':
     directmap_2=dm.GettingDirectionTests
     directmap_3=dm.GettingPosTests
     directmap_4=dm.GettingStepSizeTests
+
+    agentCol=ac.AgentCollision
 
     unittest.main()
