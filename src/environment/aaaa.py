@@ -41,12 +41,7 @@ def astar(maze, start, end):
     open_list.append(start_node)
 
     # Loop until you find the end
-    index = 0
     while len(open_list) > 0:
-        index += 1
-        if index%25==1:
-            print('haha')
-
         # Get the current node
         current_node = open_list[0]
         current_index = 0
@@ -101,7 +96,7 @@ def astar(maze, start, end):
 
             # Create the f, g, and h values
             child.g = current_node.g + 1
-            child.h = ((child.position[0] - end_node.position[0]) ** 2) + (
+            child.h = numpy.sqrt((child.position[0] - end_node.position[0]) ** 2) + (
                         (child.position[1] - end_node.position[1]) ** 2)
             child.f = child.g + child.h
 
@@ -121,16 +116,3 @@ def astar(maze, start, end):
             # Add the child to the open list
             open_list.append(child)
 
-
-            # # # Create the f, g, and h values
-            # # new_node.g = current_node.g + (numpy.sqrt(2) if diagonal_node is True else 1)
-            # # new_node.h = diagonal_distance_heuristics(Point(new_node.position[1],new_node.position[0]), Point(end[1],end[0]))#numpy.sqrt(((new_node.position[0] - end_node.position[0]) ** 2) + ((new_node.position[1] - end_node.position[1]) ** 2))
-            # # new_node.f = new_node.g + new_node.h
-            #
-            # """It count fast but return not as good result as this above"""
-            # new_node.g = current_node.g + 1
-            # new_node.h = numpy.sqrt(((new_node.position[0] - end_node.position[0]) ** 2) + ((new_node.position[1] - end_node.position[1]) ** 2))
-            # new_node.f = new_node.g + new_node.h
-            #
-            # open_list.append(new_node)
-            # # d[new_node.position[0]][new_node.position[1]] = 3

@@ -11,16 +11,16 @@ from environment.aaaa import astar
 from environment.will import a_star as will
 
 
-maze = [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+maze = [[0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0],
-        [0, 0, 0, 0, 1, 0, 0, 0, 1, 0]]
+        [0, 0, 0, 0, 1, 0, 0, 0, 0, 0]]
 
 n=50
 
@@ -63,15 +63,15 @@ d2 = copy.deepcopy(d)
 d3 = copy.deepcopy(d)
 
 """   """
-# t1 = time.time()
-# for ele in direction_map(d, [Point(49, 20), Point(49, 21)], 1):
-#     print(ele)
-# # for y in range(0, len(d)):
-# #     for x in range(0, len(d[0])):
-# #         print(astar(d2, Point(x, y), Point(49,25)))
-#
-# t2 = time.time()
-# print(str(t2 - t1))
+t1 = time.time()
+for ele in direction_map(maze, [Point(9, 5), Point(9, 4)], 1):
+    print(ele)
+# for y in range(0, len(d)):
+#     for x in range(0, len(d[0])):
+#         print(astar(d2, Point(x, y), Point(49,25)))
+
+t2 = time.time()
+print(str(t2 - t1))
 
 
 
@@ -83,13 +83,13 @@ d3 = copy.deepcopy(d)
 # t2 = time.time()
 # print(str(t2 - t1))
 #
-t1 = time.time()
-will = a_star(d3, Point(5,5), Point(49,49), d3)
-print(will)
-# for ele in direction_map(d, [Point(99, 49), Point(99, 48)], 2):
-#     print(ele)
-t2 = time.time()
-print(str(t2 - t1))
+# t1 = time.time()
+# will = a_star(maze, Point(0,0), Point(49,49), d3)
+# print(will)
+# # for ele in direction_map(d, [Point(99, 49), Point(99, 48)], 2):
+# #     print(ele)
+# t2 = time.time()
+# print(str(t2 - t1))
 
 
 # print(aa[1])
@@ -108,14 +108,14 @@ import matplotlib.pyplot as plt
 # plt.show()
 
 
-for ele in will:
-        d3[ele.y][ele.x] = 2
-# for i in maze:
-#         print(i)
-
-plt.imshow(d3)
-
-plt.show()
+# for ele in will:
+#         d3[ele.y][ele.x] = 2
+# # for i in maze:
+# #         print(i)
+#
+# plt.imshow(d3)
+#
+# plt.show()
 
 
 
