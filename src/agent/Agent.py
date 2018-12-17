@@ -37,6 +37,9 @@ class Agent:
 
         for x in range(a_x - self.max_step, a_x + self.max_step):
             for y in range(a_y - self.max_step, a_y + self.max_step):
+
+                if x >= len(self.collision_map) or y >= len(self.collision_map[x]):
+                    continue
                 distance = nav.get_distance_beteween_points(self.current_pos, (x, y))
                 angle = nav.get_angle_of_direction_between_points(self.current_pos, (x, y))
                 if distance <= self.max_step and abs(angle - self.facing_angle) <= self.forward_move_angle / 2:
@@ -76,8 +79,8 @@ class Agent:
         front_collision = self.front_collision_size
         rear_collision = self.rear_collision_size
 
-        for x in range(current_x - front_collision, current_x + front_collision+1):
-            for y in range(current_y - front_collision, current_y + front_collision+1):
+        for x in range(current_x - front_collision, current_x + front_collision + 1):
+            for y in range(current_y - front_collision, current_y + front_collision + 1):
 
                 distance = nav.get_distance_beteween_points(self.current_pos, (x, y))
                 angle = nav.get_angle_of_direction_between_points(self.current_pos, (x, y))
