@@ -2,8 +2,10 @@ import copy
 import numpy
 
 from .environment_enum import Env
-from .a_star import a_star, diagonal_distance_heuristics
+from .will import a_star, diagonal_distance_heuristics
 from .line import Point, Line
+
+from .aaaa import astar
 
 
 def direction_map(environment, exit_points, step_size):  # (Point,Env)[][] / (int[][], Point[], int)
@@ -33,7 +35,7 @@ def direction_map(environment, exit_points, step_size):  # (Point,Env)[][] / (in
                         closest_point = point
                     # fastest_paths.append(a_star(environment, Point(x, y), point))
 
-                shortest_path = a_star(environment, Point(x, y), closest_point)
+                shortest_path = astar(environment, Point(x, y), closest_point)
 
                 """ we can skip this since we are getting closest point earlier """
                 # distance_of_shortest_path = path_distance(shortest_path)
@@ -51,32 +53,36 @@ def direction_map(environment, exit_points, step_size):  # (Point,Env)[][] / (in
                     #  check if it is pointless to continue mapping
                     if mapped_environment[current_y][current_x] is not None:
                         break
-
-                    if i == len(shortest_path)-1:
+                    if i == len(shortest_path) - 1:
                         mapped_environment[current_y][current_x] = Env.EXIT
                     else:
-                        possible_step = step_size
-                        possible_step_is_correct = True
-                        while possible_step >= 1:
-                            if i+possible_step < len(shortest_path):
-                                point_to_go = Point(shortest_path[i + possible_step].x, shortest_path[i + possible_step].y)
-                            else:
-                                last_index = len(shortest_path)-1
-                                point_to_go = Point(shortest_path[last_index].x, shortest_path[last_index].y)
-                                possible_step = last_index - i
+                        mapped_environment[current_y][current_x] = shortest_path[i+1]
 
-                            # TODO we can skipp it if step is 1 or 2
-                            line = Line(Point(current_x, current_y), point_to_go)
-                            for line_obstacle in obstacles:
-                                if line.intersect(line_obstacle):
-                                    possible_step -= 1
-                                    possible_step_is_correct = False
-                                    break
-                                else:
-                                    possible_step_is_correct = True
-                            if possible_step_is_correct is True:
-                                mapped_environment[current_y][current_x] = point_to_go
-                                break
+                    # if i == len(shortest_path)-1:
+                    #     mapped_environment[current_y][current_x] = Env.EXIT
+                    # else:
+                    #     possible_step = step_size
+                    #     possible_step_is_correct = True
+                    #     while possible_step >= 1:
+                    #         if i+possible_step < len(shortest_path):
+                    #             point_to_go = Point(shortest_path[i + possible_step].x, shortest_path[i + possible_step].y)
+                    #         else:
+                    #             last_index = len(shortest_path)-1
+                    #             point_to_go = Point(shortest_path[last_index].x, shortest_path[last_index].y)
+                    #             possible_step = last_index - i
+                    #
+                    #         # TODO we can skipp it if step is 1 or 2
+                    #         line = Line(Point(current_x, current_y), point_to_go)
+                    #         for line_obstacle in obstacles:
+                    #             if line.intersect(line_obstacle):
+                    #                 possible_step -= 1
+                    #                 possible_step_is_correct = False
+                    #                 break
+                    #             else:
+                    #                 possible_step_is_correct = True
+                    #         if possible_step_is_correct is True:
+                    #             mapped_environment[current_y][current_x] = point_to_go
+                    #             break
     return mapped_environment
 
 

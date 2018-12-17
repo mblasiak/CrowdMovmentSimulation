@@ -1,18 +1,11 @@
+import bisect
+
 from .line import Point
 
 import numpy
 
 
-def a_star(environment, start, end):  # (int[][], Point, Point)
-
-    if len(environment) < start.y or len(environment[0]) < start.x or start.x < 0 or start.y < 0:
-        raise PointOutOfEnvironmentRangeException(
-            "Point (start: " + str(start) + ") out of environment range "
-            + str(len(environment)) + "x" + str(len(environment[0])))
-    if len(environment) < end.y or len(environment[0]) < end.x or end.x < 0 or end.y < 0:
-        raise PointOutOfEnvironmentRangeException(
-            "Point (end: " + str(end) + ") out of environment range "
-            + str(len(environment)) + "x" + str(len(environment[0])))
+def a_star(environment, start, end, d):  # (int[][], Point, Point)
 
     visited = []
     non_visited = []
@@ -21,10 +14,14 @@ def a_star(environment, start, end):  # (int[][], Point, Point)
     non_visited.sort()
 
     while len(non_visited) > 0:
+        #  get lowest cost node
         lowest_cost_node = non_visited[0]
+
+        #  Found the end
         if lowest_cost_node.cords == end:
             return reconstruct_path(lowest_cost_node)
 
+        #  move lowest cost node from non_visited to visited
         non_visited.remove(lowest_cost_node)
         visited.append(lowest_cost_node)
 
@@ -33,13 +30,21 @@ def a_star(environment, start, end):  # (int[][], Point, Point)
             update = update_non_visited(node, non_visited)
             if update is not None:
                 if update is True:
-                    non_visited.append(node)
+                    #non_visited.append(node)
+                    bisect.insort(non_visited, node)
+                    d[node.cords.y][node.cords.x] = 3
                 else:
                     continue
             else:
-                non_visited.append(node)
+                #non_visited.append(node)
+                bisect.insort(non_visited, node)
+                d[node.cords.y][node.cords.x] = 3
 
-        non_visited.sort()
+        # for node in neighbours:
+        #     #non_visited.append(node)
+        #     bisect.insort(non_visited, node)
+        #     d[node.cords.y][node.cords.x] = 3
+
 
     return False
 
@@ -64,6 +69,7 @@ def already_visited(cords, nodes):  # Point, Node[])
 def get_neighbours(environment, node, end, visited):  # Node[] / (Node, Point)
     """ get all the node correct neighbours """
 
+    #  Get neighbours
     neighbours_cords = [
         Point(-1, -1), Point(0, -1), Point(1, -1),
         Point(-1, 0),                Point(1, 0),
@@ -76,7 +82,7 @@ def get_neighbours(environment, node, end, visited):  # Node[] / (Node, Point)
     neighbours_nodes = []
     for cords in neighbours_cords:
 
-        # if it is parent node we skip
+        " if it is parent node we skip "
         if node.parent is not None and cords+node.cords == node.parent.cords:
             continue
 
@@ -85,6 +91,7 @@ def get_neighbours(environment, node, end, visited):  # Node[] / (Node, Point)
         if cords.y == 0 or cords.x == 0:
             diagonal_node = False
 
+        #  Get the new cords
         cords += node.cords
 
         # check if the cord is out of environment range
@@ -95,15 +102,15 @@ def get_neighbours(environment, node, end, visited):  # Node[] / (Node, Point)
         if environment[cords.y][cords.x] == 1:
             continue
 
-        # check if this cords have been already visited
-        if already_visited(cords, visited):
-            continue
+        # # check if this cords have been already visited
+        # if already_visited(cords, visited):
+        #     continue
 
         neighbour = Node(node, cords)
         neighbour.g_cost = node.g_cost + (numpy.sqrt(2) if diagonal_node else 1)
         neighbour.h_cost = diagonal_distance_heuristics(cords, end)
 
-        # check if already same cords was seen, if yes and if new node is better remove old
+        # #check if already same cords was seen, if yes and if new node is better remove old
         # for seen_node in non_visited:
         #     if node.cords == seen_node.cords:
         #         if node <= seen_node:
@@ -117,10 +124,10 @@ def get_neighbours(environment, node, end, visited):  # Node[] / (Node, Point)
 
 
 def update_non_visited(node, non_visited):  # (Node, Node[])
-    for seen_node in non_visited:
+    for index,seen_node in enumerate(non_visited):
         if node.cords == seen_node.cords:
             if node <= seen_node:
-                non_visited.remove(seen_node)
+                non_visited.pop(index)
                 return True
             else:
                 return False
@@ -186,8 +193,3 @@ class Node:
 
     def __repr__(self):
         return str(self.cords) + ", g=" + str(self.g_cost) + ", h=" + str(self.h_cost)
-
-
-class PointOutOfEnvironmentRangeException(Exception):
-    def __init__(self, message):
-        super(PointOutOfEnvironmentRangeException, self).__init__(message)
