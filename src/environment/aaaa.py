@@ -50,6 +50,7 @@ def astar(maze, start, end):
                 current_node = item
                 current_index = index
 
+
         # Pop current off open list, add to closed list
         open_list.pop(current_index)
         closed_list.append(current_node)
@@ -87,6 +88,16 @@ def astar(maze, start, end):
             # Append
             children.append(new_node)
 
+            diagonal = False
+            if new_position[0] == 0 or new_position[1]== 1:
+                diagonal = True
+
+            # Create the f, g, and h values
+            new_node.g = current_node.g + 1
+            new_node.h = diagonal_distance_heuristics(Point(new_node.position[1], new_node.position[0]), Point(end[1], end[0]))
+            #new_node.h = numpy.sqrt((new_node.position[0] - end_node.position[0]) ** 2) + ((new_node.position[1] - end_node.position[1]) ** 2)
+            new_node.f = new_node.g + new_node.h
+
             # Loop through children
         for child in children:
 
@@ -94,11 +105,7 @@ def astar(maze, start, end):
             if child in closed_list:
                 continue
 
-            # Create the f, g, and h values
-            child.g = current_node.g + 1
-            child.h = numpy.sqrt((child.position[0] - end_node.position[0]) ** 2) + (
-                        (child.position[1] - end_node.position[1]) ** 2)
-            child.f = child.g + child.h
+
 
             # Child is already in the open list
             skip = False
@@ -115,4 +122,6 @@ def astar(maze, start, end):
 
             # Add the child to the open list
             open_list.append(child)
+            #d[child.position[0]][child.position[1]] = 3
+
 
