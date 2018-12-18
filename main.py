@@ -55,12 +55,11 @@ class AgentGfx:
         self.position = position
         self.angle = radians(angle)
         self.color = color
-        self.agent = Agent((map_position[0], map_position[1]), list( zip(range(40,60),[98]*20)), 3, 3, 2, direct, maze)
+        exits=list( zip(range(40,60),[98]*20))
+        self.agent = Agent((map_position[0], map_position[1]),exits , 3, 3, 2, direct, maze)
 
     def move(self):
         result = self.agent.move()
-        self.position = self.agent.current_pos
-        print(self.agent.current_pos)
         return result
 
     def draw(self, radius):
@@ -155,7 +154,7 @@ class AgentManager:
             if agent.move():
                 self.agent_list.remove(agent)
 
-            agent.map_position = [agent.agent.current_pos[0], agent.agent.current_pos[1]]
+            agent.map_position = agent.agent.current_pos
             correct_pos = [
                 0 + self.offset + 1 + (agent.map_position[1] * self.tile_size[0]) + (self.tile_size[0] / 2),
                 self.height - self.offset - 1 - (agent.map_position[0] * self.tile_size[1]) - (
