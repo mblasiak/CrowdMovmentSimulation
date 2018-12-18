@@ -4,14 +4,14 @@ import src.navigator.navigator as nav
 
 
 def mark_location(location: (int, int), collision_map, marking_value: int):
-    # (location_y, location_x) = location
-    # if location_x < 0 or location_x > len(collision_map[0]):
-    #     return False
-    # if location_y < 0 or location_y > len(collision_map):
-    #     return False
-    # collision_map[location_x][location_y] = collision_map[location_x][location_y] + marking_value
-    # return True
-    pass
+    (location_x, location_y) = location
+    if location_x < 0 or location_x >= len(collision_map[0]):
+        return False
+    if location_y < 0 or location_y >= len(collision_map):
+        return False
+    collision_map[location_x][location_y] = collision_map[location_x][location_y] + marking_value
+    return True
+
 
 def mark_circle_obstacle(center_location: (int, int), radius: int, collision_map: [[int]], marking_value: int):
     (loc_x, loc_y) = center_location
