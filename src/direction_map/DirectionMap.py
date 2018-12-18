@@ -7,12 +7,11 @@ class DirectionMap:
 
     def __init__(self, direction_map: [[(int, int)]]):
         self.direction_map = direction_map
-        print(direction_map[45][44])
 
     def get_next_position(self, current_pos: (int, int)):
         (current_y, current_x) = current_pos
-        (x ,y)=self.direction_map[current_y][current_x]
-        return (y,x)
+        point = self.direction_map[current_y][current_x]
+        return point[1], point[0]
 
     def get_direction(self, current_pos: (int, int)):
         return nav.get_direction_to_another_point(current_pos, self.get_next_position(current_pos))

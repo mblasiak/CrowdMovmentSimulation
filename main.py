@@ -145,16 +145,23 @@ class AgentManager:
         self.agent_list.append(AgentGfx(correct_pos, position, angle, color, [dir_x, dir_y], maze, direct))
 
     def step(self):
+        to_remove_list = []
         for agent in self.agent_list:
+            possible_move = agent.agent.get_possible_move()
+            if self.direction_map[possible_move[0]][possible_move[1]] is Env.EXIT:
+                to_remove_list.append(agent)
+                continue
+
             agent.agent.move()
 
-            print(agent.agent.current_pos)
             agent.map_position = [agent.agent.current_pos[0], agent.agent.current_pos[1]]
             correct_pos = [
                 0 + self.offset + 1 + (agent.map_position[1] * self.tile_size[0]) + (self.tile_size[0] / 2),
                 self.height - self.offset - 1 - (agent.map_position[0] * self.tile_size[1]) - (self.tile_size[1] / 2)
             ]
             agent.position = correct_pos
+        for agent in to_remove_list:
+            self.agent_list.remove(agent)
 
 
 if not glfw.init():
@@ -196,8 +203,8 @@ agents.add_new([1, 1], random.randint(0, 360), [.0, .0, .6])
 # agents.add_new([2, 0], random.randint(0, 360), [.0, .0, .6])
 # agents.add_new([3, 3], random.randint(0, 360), [.0, .0, .6])
 # agents.add_new([4, 0], random.randint(0, 360), [.0, .0, .6])
-# agents.add_new([5, 5], random.randint(0, 360), [.0, .0, .6])
-# agents.add_new([6, 6], random.randint(0, 360), [.0, .0, .6])
+agents.add_new([15, 5], random.randint(0, 360), [.0, .0, .6])
+agents.add_new([90, 70], random.randint(0, 360), [.0, .0, .6])
 
 
 def mouse_button_callback(window, button, action, mods):
@@ -239,10 +246,9 @@ while not glfw.window_should_close(window):
     current_time = glfw.get_time()
     frame_count += 1
 
-    if current_time - old_step_time >= 0.1:
-        print("------------------------")
-        agents.step()
-        old_step_time = current_time
+    # if current_time - old_step_time >= 0.1:
+    agents.step()
+    # old_step_time = current_time
 
     if current_time - previous_time >= 1.0:
         glfw.set_window_title(window, "Modelowanie i Symulacja Systemów - Symulacja (" + str(frame_count) + " FPS)")
@@ -321,7 +327,7 @@ while not glfw.window_should_close(window):
     # draw map
     for i in range(len(maze)):
         for j in range(len(maze[0])):
-            draw_tile(i, j, maze[i][j], True)  # True for helper lines
+            draw_tile(i, j, maze[i][j], False)  # True for helper lines
 
     # draw agents
     agents.draw_all()

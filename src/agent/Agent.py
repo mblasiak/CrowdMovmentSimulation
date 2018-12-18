@@ -27,8 +27,6 @@ class Agent:
         self.collision_map = collision_map
         self.facing_angle = directions_map.get_angle(self.current_pos)
         self.move_counter = 0
-        print("KOKO")
-        print( self.direction_map.get_next_position((45,44)))
 
     def update_facing_angle(self):
         self.facing_angle = self.direction_map.get_angle(self.current_pos)
@@ -65,8 +63,6 @@ class Agent:
         desired_move = self.direction_map.get_next_position(self.current_pos)
 
         if self.collision_map[desired_move[0]][desired_move[1]] == 0:
-            print("Chose desired move")
-
             return desired_move
 
         if len(moves) == 0:
@@ -105,6 +101,9 @@ class Agent:
     def add_position_to_collision_map(self):
         self.update_collision_map(1)
 
+    def get_possible_move(self):
+        return self.get_best_move(self.get_available_moves())
+
     def move(self):
         if self.move_counter == 0:
             self.add_position_to_collision_map()
@@ -117,7 +116,6 @@ class Agent:
         self.current_pos = best_pos
         self.update_facing_angle()
         self.add_position_to_collision_map()
-
 
         if self.check_if_finish_has_been_reached():
             return 1
