@@ -5,11 +5,11 @@ import os
 import random
 import re
 
-from source.src.agent.Agent import Agent
-from source.src.direction_map.DirectionMap import DirectionMap
-from source.src.environment.environment import direction_map
-from source.src.environment.environment_enum import Env
-from source.src.environment.line import Point
+from src.agent.Agent import Agent
+from src.direction_map.DirectionMap import DirectionMap
+from src.environment.environment import direction_map
+from src.environment.environment_enum import Env
+from src.environment.line import Point
 
 
 def get_current_working_dir():
@@ -55,7 +55,7 @@ class AgentGfx:
         self.position = position
         self.angle = radians(angle)
         self.color = color
-        self.agent = Agent((map_position[0], map_position[1]), (99, 99), 1, 3, 2, direct, maze)
+        self.agent = Agent((map_position[0], map_position[1]), (99, 99), 3, 3, 2, direct, maze)
 
     def draw(self, radius):
         direction = [cos(self.angle) + self.position[0], sin(self.angle) + self.position[1]]

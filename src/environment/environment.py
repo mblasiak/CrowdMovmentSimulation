@@ -2,7 +2,7 @@ import copy
 import numpy
 
 from .environment_enum import Env
-from .will import a_star, diagonal_distance_heuristics
+
 from .line import Point, Line
 
 from .aaaa import astar

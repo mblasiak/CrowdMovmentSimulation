@@ -14,7 +14,7 @@ directions = direction_map(collisions, [Point(67, 70)], 3)
 
 direct = DirectionMap(directions)
 
-human_0 = Agent(star_pos, end_pos, 3, 3, 2, direct, collisions)
+human_0 = Agent(star_pos, end_pos,3 , 3, 2, direct, collisions)
 human_0.move()
 human_0.move()
 human_0.move()

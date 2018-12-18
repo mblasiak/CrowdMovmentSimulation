@@ -1,7 +1,7 @@
 import numpy
 
-from environment.a_star import diagonal_distance_heuristics
-from environment.line import Point
+from src.environment.a_star import diagonal_distance_heuristics
+from src.environment.line import Point
 
 
 class Node():
