@@ -6,7 +6,7 @@ from src.collisions.collision_map_tools import mark_location
 
 
 class Agent:
-    def __init__(self, start_position: (int, int), end_position: (int, int), max_step: int, front_collision_size: float,
+    def __init__(self, start_position: (int, int), end_position: [(int, int)], max_step: int, front_collision_size: float,
                  rear_collision_size: float,
                  directions_map: DirectionMap,
                  collision_map: [[(int, int)]]):
@@ -118,6 +118,7 @@ class Agent:
         self.add_position_to_collision_map()
 
         if self.check_if_finish_has_been_reached():
+            self.clear_position_to_collision_map()
             return 1
 
         self.move_counter = self.move_counter + 1
@@ -125,7 +126,7 @@ class Agent:
 
     def check_if_finish_has_been_reached(self):
 
-        if self.end == self.current_pos:
+        if self.current_pos in self.end:
             return True
         else:
             return False

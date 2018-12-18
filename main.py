@@ -7,7 +7,6 @@ import re
 
 from src.agent.Agent import Agent
 from src.direction_map.DirectionMap import DirectionMap
-from src.environment.environment import direction_map
 from src.environment.environment_enum import Env
 from src.environment.line import Point
 
@@ -50,12 +49,19 @@ def load_direction_from_file(directions_filename: str):
 
 
 class AgentGfx:
-    def __init__(self, position: [float, float], map_position: [int, int], angle: float, color: [float, float, float], direction, maze, direct):
+    def __init__(self, position: [float, float], map_position: [int, int], angle: float, color: [float, float, float],
+                 direction, maze, direct):
         self.map_position = map_position
         self.position = position
         self.angle = radians(angle)
         self.color = color
-        self.agent = Agent((map_position[0], map_position[1]), (99, 99), 3, 3, 2, direct, maze)
+        self.agent = Agent((map_position[0], map_position[1]), list( zip(range(40,60),[98]*20)), 3, 3, 2, direct, maze)
+
+    def move(self):
+        result = self.agent.move()
+        self.position = self.agent.current_pos
+        print(self.agent.current_pos)
+        return result
 
     def draw(self, radius):
         direction = [cos(self.angle) + self.position[0], sin(self.angle) + self.position[1]]
@@ -63,7 +69,7 @@ class AgentGfx:
         glColor3f(self.color[0], self.color[1], self.color[2])
 
         # draw circle
-        posx, posy = self.position
+        posx, posy = self.agent.current_pos
         sides = 64
 
         # draw circle filling
@@ -145,23 +151,18 @@ class AgentManager:
         self.agent_list.append(AgentGfx(correct_pos, position, angle, color, [dir_x, dir_y], maze, direct))
 
     def step(self):
-        to_remove_list = []
         for agent in self.agent_list:
-            possible_move = agent.agent.get_possible_move()
-            if self.direction_map[possible_move[0]][possible_move[1]] is Env.EXIT:
-                to_remove_list.append(agent)
-                continue
-
-            agent.agent.move()
+            if agent.move():
+                self.agent_list.remove(agent)
 
             agent.map_position = [agent.agent.current_pos[0], agent.agent.current_pos[1]]
             correct_pos = [
                 0 + self.offset + 1 + (agent.map_position[1] * self.tile_size[0]) + (self.tile_size[0] / 2),
-                self.height - self.offset - 1 - (agent.map_position[0] * self.tile_size[1]) - (self.tile_size[1] / 2)
+                self.height - self.offset - 1 - (agent.map_position[0] * self.tile_size[1]) - (
+                            self.tile_size[1] / 2)
             ]
+
             agent.position = correct_pos
-        for agent in to_remove_list:
-            self.agent_list.remove(agent)
 
 
 if not glfw.init():
@@ -290,6 +291,7 @@ while not glfw.window_should_close(window):
 
     glEnd()
 
+
     # draw tile [n, m]
     def draw_tile(n, m, block_type, draw_debug):
 
@@ -333,6 +335,5 @@ while not glfw.window_should_close(window):
     agents.draw_all()
 
     glfw.swap_buffers(window)
-
 
 glfw.terminate()
