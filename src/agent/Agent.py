@@ -28,6 +28,7 @@ class Agent:
         self.facing_angle = directions_map.get_angle(self.current_pos)
         self.move_counter = 0
 
+
     def update_facing_angle(self):
         self.facing_angle = self.direction_map.get_angle(self.current_pos)
 
@@ -63,6 +64,7 @@ class Agent:
         desired_move = self.direction_map.get_next_position(self.current_pos)
 
         if self.collision_map[desired_move[0]][desired_move[1]] == 0:
+            print("Chose desired move")
             return desired_move
 
         if len(moves) == 0:
@@ -111,8 +113,9 @@ class Agent:
         best_pos = self.get_best_move(available_positions)
 
         self.current_pos = best_pos
-        self.add_position_to_collision_map()
         self.update_facing_angle()
+        self.add_position_to_collision_map()
+
 
         if self.check_if_finish_has_been_reached():
             return 1
