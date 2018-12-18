@@ -2,6 +2,14 @@ from math import *
 import glfw
 from OpenGL.GL import *
 import os
+import random
+import re
+
+from source.src.agent.Agent import Agent
+from source.src.direction_map.DirectionMap import DirectionMap
+from source.src.environment.environment import direction_map
+from source.src.environment.environment_enum import Env
+from source.src.environment.line import Point
 
 
 def get_current_working_dir():
@@ -13,12 +21,41 @@ def load_map_from_file(map_filename: str):
         return [[int(x) for x in line.split()] for line in text_file]
 
 
+def load_direction_from_file(directions_filename: str):
+    with open(directions_filename) as text_file:
+        content = text_file.readlines()
+    direction = []
+    for line in content:
+        splitted = re.split("\) \(|\) |\(| |, |\n", line)
+        splitted = splitted[1::]
+        splitted = splitted[:-2 or None]
+        points = []
+        pos_x = -1
+        candidate = False
+        for x in splitted:
+            if candidate:
+                candidate = False
+                points.append((pos_x, int(x)))
+            elif x == '':
+                continue
+            elif x == 'obstacle':
+                points.append(Env.OBSTACLE)
+            elif x == 'exit':
+                points.append(Env.EXIT)
+            else:  # x is a number
+                candidate = True
+                pos_x = int(x)
+        direction.append(points)
+    return direction
+
+
 class AgentGfx:
-    def __init__(self, position: [float, float], map_position: [int, int], angle: float, color: [float, float, float]):
+    def __init__(self, position: [float, float], map_position: [int, int], angle: float, color: [float, float, float], direction, maze, direct):
         self.map_position = map_position
         self.position = position
         self.angle = radians(angle)
         self.color = color
+        self.agent = Agent((map_position[0], map_position[1]), (99, 99), 1, 3, 2, direct, maze)
 
     def draw(self, radius):
         direction = [cos(self.angle) + self.position[0], sin(self.angle) + self.position[1]]
@@ -37,7 +74,7 @@ class AgentGfx:
         glEnd()
 
         # draw circle outline
-        glLineWidth(0.5)
+        glLineWidth(0.1)
         glColor3f(1.0, 1.0, 1.0)
 
         glBegin(GL_LINE_LOOP)
@@ -53,28 +90,27 @@ class AgentGfx:
         vec[0] = vec[0] / vec_len * radius
         vec[1] = vec[1] / vec_len * radius
 
-        glLineWidth(0.5)
+        glLineWidth(0.1)
         glColor3f(1.0, 1.0, 1.0)
         glBegin(GL_LINES)
         glVertex2f(self.position[0], self.position[1])
         glVertex2f(self.position[0] + vec[0], self.position[1] + vec[1])
         glEnd()
 
-    def set_position(self, position: [float, float]):
-        self.position = position
-
-    def set_angle(self, angle: float):
-        self.angle = angle
-
 
 class AgentManager:
-    def __init__(self, initial_tile_size: [float, float], client_width: int, client_height: int, map_offset: int):
+    def __init__(self, initial_tile_size: [float, float], client_width: int, client_height: int, map_offset: int,
+                 direction_map, exit, maze, direct):
         self.agent_list = list()
         self.tile_size = initial_tile_size
         self.agent_radius = (initial_tile_size[1] - initial_tile_size[1] / 5) / 2
         self.width = client_width
         self.height = client_height
         self.offset = map_offset
+        self.direction_map = direction_map
+        self.exit_points = exit
+        self.maze = maze
+        self.direct = direct
 
     def set_client_tile_size(self, client_width: int, client_height: int, tile_size: [float, float]):
         self.width = client_width
@@ -87,7 +123,7 @@ class AgentManager:
                 0 + self.offset + 1 + (agent.map_position[1] * self.tile_size[0]) + (self.tile_size[0] / 2),
                 self.height - self.offset - 1 - (agent.map_position[0] * self.tile_size[1]) - (self.tile_size[1] / 2)
             ]
-            agent.set_position(correct_pos)
+            agent.position = correct_pos
 
     def draw_all(self):
         for agent in self.agent_list:
@@ -104,8 +140,21 @@ class AgentManager:
             self.height - self.offset - 1 - (position[0] * self.tile_size[1]) - (self.tile_size[1] / 2)
         ]
 
-        self.agent_list.append(AgentGfx(correct_pos, position, angle, color))
-        pass
+        dir_x, dir_y = self.best_way[position[0]][position[1]]
+
+        self.agent_list.append(AgentGfx(correct_pos, position, angle, color, [dir_x, dir_y], maze, direct))
+
+    def step(self):
+        for agent in self.agent_list:
+            agent.agent.move()
+
+            print(agent.agent.current_pos)
+            agent.map_position = [agent.agent.current_pos[0], agent.agent.current_pos[1]]
+            correct_pos = [
+                0 + self.offset + 1 + (agent.map_position[1] * self.tile_size[0]) + (self.tile_size[0] / 2),
+                self.height - self.offset - 1 - (agent.map_position[0] * self.tile_size[1]) - (self.tile_size[1] / 2)
+            ]
+            agent.position = correct_pos
 
 
 if not glfw.init():
@@ -122,6 +171,14 @@ camera_position = [0.5, 0.5, 0]
 
 maze = load_map_from_file("dobry_maze100na100.txt")
 
+exit_points = []
+for i in range(40, 60):
+    exit_points.append(Point(99, i))
+
+# directions = direction_map(maze, exit_points, 1)
+directions = load_direction_from_file("direction_map100na100.txt")
+direct = DirectionMap(directions)
+
 free_color = [25, 25, 25]
 collision_color = [128, 0, 0]
 
@@ -133,14 +190,14 @@ offset = 20
 # tile size
 t_s = [(w_prev - 2 * (offset + 1)) / len(maze[0]), (h_prev - 2 * (offset + 1)) / len(maze)]
 
-agents = AgentManager(t_s, w_prev, h_prev, offset)
-agents.add_new([0, 0], 45.0, [.0, .0, .6])
-agents.add_new([1, 0], 45.0, [.0, .0, .6])
-agents.add_new([2, 0], 45.0, [.0, .0, .6])
-agents.add_new([3, 3], 45.0, [.0, .0, .6])
-agents.add_new([4, 0], 45.0, [.0, .0, .6])
-agents.add_new([5, 5], 45.0, [.0, .0, .6])
-agents.add_new([6, 6], 45.0, [.0, .0, .6])
+agents = AgentManager(t_s, w_prev, h_prev, offset, directions, exit_points, maze, direct)
+agents.add_new([1, 1], random.randint(0, 360), [.0, .0, .6])
+# agents.add_new([1, 0], random.randint(0, 360), [.0, .0, .6])
+# agents.add_new([2, 0], random.randint(0, 360), [.0, .0, .6])
+# agents.add_new([3, 3], random.randint(0, 360), [.0, .0, .6])
+# agents.add_new([4, 0], random.randint(0, 360), [.0, .0, .6])
+# agents.add_new([5, 5], random.randint(0, 360), [.0, .0, .6])
+# agents.add_new([6, 6], random.randint(0, 360), [.0, .0, .6])
 
 
 def mouse_button_callback(window, button, action, mods):
@@ -155,7 +212,7 @@ def mouse_button_callback(window, button, action, mods):
         for it in range(len(maze[0])):
             if t_s[0] * it < pos_x < t_s[0] * (it + 1):
                 pos[1] = it
-        if pos[0] != -1 and pos[1] != -1:
+        if pos[0] != -1 and pos[1] != -1 and maze[pos[0]][pos[1]] != 1:
             agents.add_new(pos, 33.0, [.0, .0, .9])
 
 
@@ -174,12 +231,18 @@ def key_callback(window, key, scancode, action, mods):
 glfw.set_mouse_button_callback(window, mouse_button_callback)
 glfw.set_key_callback(window, key_callback)
 
+old_step_time = glfw.get_time()
 previous_time = glfw.get_time()
 frame_count = 0
 while not glfw.window_should_close(window):
 
     current_time = glfw.get_time()
     frame_count += 1
+
+    if current_time - old_step_time >= 0.1:
+        print("------------------------")
+        agents.step()
+        old_step_time = current_time
 
     if current_time - previous_time >= 1.0:
         glfw.set_window_title(window, "Modelowanie i Symulacja Systemów - Symulacja (" + str(frame_count) + " FPS)")
@@ -258,11 +321,12 @@ while not glfw.window_should_close(window):
     # draw map
     for i in range(len(maze)):
         for j in range(len(maze[0])):
-            draw_tile(i, j, maze[i][j], False)  # True for helper lines
+            draw_tile(i, j, maze[i][j], True)  # True for helper lines
 
     # draw agents
     agents.draw_all()
 
     glfw.swap_buffers(window)
+
 
 glfw.terminate()
