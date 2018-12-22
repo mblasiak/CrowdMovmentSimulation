@@ -11,19 +11,19 @@ class Line:
         return "(" + str(self.point_start) + ", " + str(self.point_end) + ")"
 
     def intersect(self, line):
-        """ returns true if two line intersect"""
-        # general case
+        """ Returns true if two line intersect"""
+        # General case
         o1 = orientation(self.point_start, self.point_end, line.point_start)
         o2 = orientation(self.point_start, self.point_end, line.point_end)
-        # special case
+        # Special case
         o3 = orientation(line.point_start, line.point_end, self.point_start)
         o4 = orientation(line.point_start, line.point_end, self.point_end)
 
-        # general case
+        # General case
         if o1 != o2 and o3 != o4:
             return True
 
-        # special case
+        # Special case
         if o1 == Intersect.COLLINEAR and is_between(self.point_start, line.point_start, self.point_end):
             return True
         elif o2 == Intersect.COLLINEAR and is_between(self.point_start, line.point_end, self.point_end):

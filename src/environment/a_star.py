@@ -1,134 +1,103 @@
-import bisect
-
-from .line import Point
-
 import numpy
 
 
-def a_star(environment, start, end,d):  # (int[][], Point, Point)
+from environment.line import Point
 
-    if len(environment) < start.y or len(environment[0]) < start.x or start.x < 0 or start.y < 0:
-        raise PointOutOfEnvironmentRangeException(
-            "Point (start: " + str(start) + ") out of environment range "
-            + str(len(environment)) + "x" + str(len(environment[0])))
-    if len(environment) < end.y or len(environment[0]) < end.x or end.x < 0 or end.y < 0:
-        raise PointOutOfEnvironmentRangeException(
-            "Point (end: " + str(end) + ") out of environment range "
-            + str(len(environment)) + "x" + str(len(environment[0])))
 
-    visited = []
-    non_visited = []
+def astar(maze, start, end):
+    """Returns a list of points in fastest path"""
+
+    # Change points to tuples, since it works faster
+    start = (start.y, start.x)
+    end = (end.y, end.x)
+
+    # Create start and end node
     start_node = Node(None, start)
-    non_visited.extend(get_neighbours(environment, start_node, end, []))
-    non_visited.sort()
+    start_node.g = start_node.h = start_node.f = 0
+    end_node = Node(None, end)
+    end_node.g = end_node.h = end_node.f = 0
 
-    while len(non_visited) > 0:
-        lowest_cost_node = non_visited[0]
-        if lowest_cost_node.cords == end:
-            return reconstruct_path(lowest_cost_node)
+    # Initialize both open and closed list
+    open_list = []
+    closed_list = []
 
-        non_visited.remove(lowest_cost_node)
-        visited.append(lowest_cost_node)
+    # Add the start node
+    open_list.append(start_node)
 
-        neighbours = get_neighbours(environment, lowest_cost_node, end, visited)
-        for node in neighbours:
-            update = update_non_visited(node, non_visited)
-            if update is not None:
-                if update is True:
-                    non_visited.append(node)
-                    d[node.cords.y][node.cords.x] = 3
-                else:
-                    continue
-            else:
-                non_visited.append(node)
-                d[node.cords.y][node.cords.x] = 3
+    # Loop until you find the end
+    while len(open_list) > 0:
+        # Get the current node
+        current_node = open_list[0]
+        current_index = 0
+        for index, item in enumerate(open_list):
+            if item.f < current_node.f:
+                current_node = item
+                current_index = index
 
-        non_visited.sort()
+        # Pop current off open list, add to closed list
+        open_list.pop(current_index)
+        closed_list.append(current_node)
 
-    return False
+        # Found the goal
+        if current_node == end_node:
+            path = []
+            current = current_node
+            while current is not None:
+                path.append(current.position)
+                current = current.parent
+            for index, ele in enumerate(path):
+                path[index] = Point(ele[1], ele[0])
+            return path[::-1]  # Return reversed path
 
+        # Generate children
+        children = []
+        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]:  # Adjacent squares
 
-def reconstruct_path(node):  # Point[] / Node
-    path = []
-    while node.parent is not None:
-        path.append(node.cords)
-        node = node.parent
-    path.append(node.cords)
-    path.reverse()
-    return path
+            # Get node position
+            node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
+            # Make sure within range
+            if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (
+                    len(maze[len(maze) - 1]) - 1) or node_position[1] < 0:
+                continue
 
-def already_visited(cords, nodes):  # Point, Node[])
-    for node in nodes:
-        if cords == node.cords:
-            return True
-    return False
+            # Make sure walkable terrain
+            if maze[node_position[0]][node_position[1]] != 0:
+                continue
 
+            # Create new node
+            new_node = Node(current_node, node_position)
 
-def get_neighbours(environment, node, end, visited):  # Node[] / (Node, Point)
-    """ get all the node correct neighbours """
+            # Append
+            children.append(new_node)
 
-    neighbours_cords = [
-        Point(-1, -1), Point(0, -1), Point(1, -1),
-        Point(-1, 0),                Point(1, 0),
-        Point(-1, 1),  Point(0, 1),  Point(1, 1),
-    ]
+            # Create the f, g, and h values
+            new_node.g = current_node.g + 1
+            new_node.h = diagonal_distance_heuristics(Point(new_node.position[1], new_node.position[0]), Point(end[1], end[0]))
+            new_node.f = new_node.g + new_node.h
 
-    environment_x_range = len(environment[0])
-    environment_y_range = len(environment)
+        # Loop through children
+        for child in children:
 
-    neighbours_nodes = []
-    for cords in neighbours_cords:
+            # Child is on the closed list
+            if child in closed_list:
+                continue
 
-        # if it is parent node we skip
-        if node.parent is not None and cords+node.cords == node.parent.cords:
-            continue
+            # Child is already in the open list
+            skip = False
+            for index,open_node in enumerate(open_list):
+                if open_node.position == child.position:
+                    if open_node.f > child.f or (child.f == open_node.f and child.h < open_node.f):
+                        open_list.pop(index)
+                        break
+                    else:
+                        skip = True
 
-        # if we move vertically or horizontal we move 1, if diagonal sqrt(2)
-        diagonal_node = True
-        if cords.y == 0 or cords.x == 0:
-            diagonal_node = False
+            if skip is True:
+                continue
 
-        cords += node.cords
-
-        # check if the cord is out of environment range
-        if cords.x >= environment_x_range or cords.x < 0 or cords.y >= environment_y_range or cords.y < 0:
-            continue
-
-        # check if this cord is an obstacle (1 mean it is)
-        if environment[cords.y][cords.x] == 1:
-            continue
-
-        # check if this cords have been already visited
-        if already_visited(cords, visited):
-            continue
-
-        neighbour = Node(node, cords)
-        neighbour.g_cost = node.g_cost + (numpy.sqrt(2) if diagonal_node else 1)
-        neighbour.h_cost = diagonal_distance_heuristics(cords, end)
-
-        # check if already same cords was seen, if yes and if new node is better remove old
-        # for seen_node in non_visited:
-        #     if node.cords == seen_node.cords:
-        #         if node <= seen_node:
-        #             non_visited.remove(seen_node)
-        #         else:
-        #             continue
-
-        neighbours_nodes.append(neighbour)
-
-    return neighbours_nodes
-
-
-def update_non_visited(node, non_visited):  # (Node, Node[])
-    for seen_node in non_visited:
-        if node.cords == seen_node.cords:
-            if node <= seen_node:
-                non_visited.remove(seen_node)
-                return True
-            else:
-                return False
-    return None
+            # Add the child to the open list
+            open_list.append(child)
 
 
 def diagonal_distance_heuristics(current, end):  # (Point, Point)
@@ -146,52 +115,17 @@ def diagonal_distance_heuristics(current, end):  # (Point, Point)
         return (dy - dx) + d2 * dx
 
 
-# TODO change compare (bad code)
 class Node:
-    def __init__(self, parent, cords):
+    def __init__(self, parent=None, position=None):
         self.parent = parent
-        self.cords = cords
-        self.g_cost = 0  # cost from start to current
-        self.h_cost = 0  # cost from current to end
+        self.position = position
 
-    def f_cost(self):
-        return self.g_cost+self.h_cost
-
-    def __cmp__(self, other):
-        if self.f_cost() > other.f_cost():
-            return 1
-        elif self.f_cost() < other.f_cost():
-            return -1
-        else:
-            if self.h_cost > other.h_cost:
-                return 1
-            elif self.h_cost < other.h_cost:
-                return -1
-            else:
-                return 0
-
-    def __lt__(self, other):
-        return self.__cmp__(other) < 0
-
-    def __gt__(self, other):
-        return self.__cmp__(other) > 0
+        self.g = 0
+        self.h = 0
+        self.f = 0
 
     def __eq__(self, other):
-        return self.__cmp__(other) == 0
-
-    def __le__(self, other):
-        return self.__cmp__(other) <= 0
-
-    def __ge__(self, other):
-        return self.__cmp__(other) >= 0
-
-    def __ne__(self, other):
-        return self.__cmp__(other) != 0
+        return self.position == other.position
 
     def __repr__(self):
-        return str(self.cords) + ", g=" + str(self.g_cost) + ", h=" + str(self.h_cost)
-
-
-class PointOutOfEnvironmentRangeException(Exception):
-    def __init__(self, message):
-        super(PointOutOfEnvironmentRangeException, self).__init__(message)
+        return str(self.position) + "f:" + str(self.f)
