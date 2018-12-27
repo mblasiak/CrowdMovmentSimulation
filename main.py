@@ -57,6 +57,7 @@ class AgentGfx:
         self.color = color
         exits=list( zip(range(40,60),[98]*20))
         self.agent = Agent((map_position[0], map_position[1]),exits , 3, 3, 2, direct, maze)
+        self.correct_pos=(0,0)
 
     def move(self):
         result = self.agent.move()
@@ -68,7 +69,8 @@ class AgentGfx:
         glColor3f(self.color[0], self.color[1], self.color[2])
 
         # draw circle
-        posx, posy = self.agent.current_pos
+
+        posx, posy = self.correct_pos
         sides = 64
 
         # draw circle filling
@@ -155,13 +157,13 @@ class AgentManager:
                 self.agent_list.remove(agent)
 
             agent.map_position = agent.agent.current_pos
-            correct_pos = [
+            agent.correct_pos = [
                 0 + self.offset + 1 + (agent.map_position[1] * self.tile_size[0]) + (self.tile_size[0] / 2),
                 self.height - self.offset - 1 - (agent.map_position[0] * self.tile_size[1]) - (
                             self.tile_size[1] / 2)
             ]
 
-            agent.position = correct_pos
+            agent.position = agent.correct_pos
 
 
 if not glfw.init():
