@@ -48,62 +48,6 @@ def load_direction_from_file(directions_filename: str):
     return direction
 
 
-class AgentGfx:
-    def __init__(self, position: [float, float], map_position: [int, int], angle: float, color: [float, float, float],
-                 direction, maze, direct):
-        self.map_position = map_position
-        self.position = position
-        self.angle = radians(angle)
-        self.color = color
-        exits=list( zip(range(40,60),[98]*20))
-        self.agent = Agent((map_position[0], map_position[1]),exits , 3, 3, 2, direct, maze)
-        self.correct_pos=(0,0)
-
-    def move(self):
-        result = self.agent.move()
-        return result
-
-    def draw(self, radius):
-        direction = [cos(self.angle) + self.position[0], sin(self.angle) + self.position[1]]
-
-        glColor3f(self.color[0], self.color[1], self.color[2])
-
-        # draw circle
-
-        posx, posy = self.correct_pos
-        sides = 64
-
-        # draw circle filling
-        glBegin(GL_POLYGON)
-        for vertex in range(sides):
-            angle = float(vertex) * 2.0 * pi / sides
-            glVertex2f(cos(angle) * radius + posx, sin(angle) * radius + posy)
-        glEnd()
-
-        # draw circle outline
-        glLineWidth(0.1)
-        glColor3f(1.0, 1.0, 1.0)
-
-        glBegin(GL_LINE_LOOP)
-        for vertex in range(sides):
-            angle = float(vertex) * 2.0 * pi / sides
-            glVertex2f(cos(angle) * radius + posx, sin(angle) * radius + posy)
-        glEnd()
-
-        # draw line
-        vec = [(direction[0] - self.position[0]), (direction[1] - self.position[1])]
-
-        vec_len = sqrt(pow(vec[0], 2) + pow(vec[1], 2))
-        vec[0] = vec[0] / vec_len * radius
-        vec[1] = vec[1] / vec_len * radius
-
-        glLineWidth(0.1)
-        glColor3f(1.0, 1.0, 1.0)
-        glBegin(GL_LINES)
-        glVertex2f(self.position[0], self.position[1])
-        glVertex2f(self.position[0] + vec[0], self.position[1] + vec[1])
-        glEnd()
-
 
 class AgentManager:
     def __init__(self, initial_tile_size: [float, float], client_width: int, client_height: int, map_offset: int,
@@ -157,13 +101,13 @@ class AgentManager:
                 self.agent_list.remove(agent)
 
             agent.map_position = agent.agent.current_pos
-            agent.correct_pos = [
+            agent.fx_pos = [
                 0 + self.offset + 1 + (agent.map_position[1] * self.tile_size[0]) + (self.tile_size[0] / 2),
                 self.height - self.offset - 1 - (agent.map_position[0] * self.tile_size[1]) - (
                             self.tile_size[1] / 2)
             ]
 
-            agent.position = agent.correct_pos
+            agent.position = agent.fx_pos
 
 
 if not glfw.init():
@@ -178,14 +122,14 @@ if not window:
 
 camera_position = [0.5, 0.5, 0]
 
-maze = load_map_from_file("dobry_maze100na100.txt")
+maze = load_map_from_file("resources/dobry_maze100na100.txt")
 
 exit_points = []
 for i in range(40, 60):
     exit_points.append(Point(99, i))
 
 # directions = direction_map(maze, exit_points, 1)
-directions = load_direction_from_file("direction_map100na100.txt")
+directions = load_direction_from_file("resources/direction_map100na100.txt")
 direct = DirectionMap(directions)
 
 free_color = [25, 25, 25]
