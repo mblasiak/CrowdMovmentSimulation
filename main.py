@@ -4,9 +4,9 @@ import os
 import random
 import re
 
-from src.direction_map.DirectionMap import DirectionMap
-from src.environment.environment_enum import Env
-from src.environment.line import Point
+from model.direction_map.DirectionMap import DirectionMap
+from model.environment.environment_enum import Env
+from model.environment.line import Point
 
 from gfx.AgentMenager import AgentManager
 

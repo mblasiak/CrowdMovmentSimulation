@@ -3,7 +3,7 @@ import unittest
 
 import numpy as np
 
-from src.collisions.collision_map_tools import mark_squere_obstacle, mark_location, mark_circle_obstacle
+from model.collisions.collision_map_tools import mark_squere_obstacle, mark_location, mark_circle_obstacle
 from tests.tesing_tools.list_comparator.compare_lists import compare_lists
 
 class TestMarking(unittest.TestCase):

@@ -2,8 +2,8 @@ import unittest
 
 import numpy as np
 
-from src.direction_map.DirectionMap import DirectionMap
-import src.navigator.navigator as nav
+from model.direction_map.DirectionMap import DirectionMap
+import model.navigator.navigator as nav
 
 
 class GettingPosTests(unittest.TestCase):

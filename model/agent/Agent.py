@@ -1,8 +1,8 @@
 import numpy as np
 
-import src.navigator.navigator as nav
-from src.direction_map import DirectionMap
-from src.collisions.collision_map_tools import mark_location
+import model.navigator.navigator as nav
+from model.direction_map import DirectionMap
+from model.collisions.collision_map_tools import mark_location
 
 
 class Agent:

@@ -1,9 +1,9 @@
 import numpy as np
 
-from src.agent.Agent import Agent
-from src.direction_map.DirectionMap import DirectionMap
-from src.environment.environment import direction_map
-from src.environment.line import Point
+from model.agent.Agent import Agent
+from model.direction_map.DirectionMap import DirectionMap
+from model.environment.environment import direction_map
+from model.environment.line import Point
 
 star_pos = (1, 1)
 end_pos = (99, 99)

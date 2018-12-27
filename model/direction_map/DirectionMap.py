@@ -1,6 +1,6 @@
 import numpy as np
 
-import src.navigator.navigator as nav
+import model.navigator.navigator as nav
 
 
 class DirectionMap:
