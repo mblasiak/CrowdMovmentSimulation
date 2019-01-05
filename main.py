@@ -60,14 +60,14 @@ if not window:
 
 camera_position = [0.5, 0.5, 0]
 
-maze = load_map_from_file("resources/dobry_maze100na100.txt")
+maze = load_map_from_file("resources/ready/dobry_maze100na100.txt")
 
 exit_points = []
 for i in range(40, 60):
     exit_points.append(Point(99, i))
 
 # directions = direction_map(maze, exit_points, 1)
-directions = load_direction_from_file("resources/direction_map100na100.txt")
+directions = load_direction_from_file("resources/ready/direction_map100na100.txt")
 direct = DirectionMap(directions)
 
 free_color = [25, 25, 25]
