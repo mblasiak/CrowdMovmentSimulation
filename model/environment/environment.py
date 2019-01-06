@@ -62,9 +62,9 @@ def direction_map(environment, exit_points , step_size, quality_direction_map=Fa
                         else:
                             # Check if next step is over exit
                             if i+step_size >= len(shortest_path)-1:
-                                mapped_environment[current_y][current_x] = shortest_path[len(shortest_path)-1]
+                                mapped_environment[current_y][current_x] = shortest_path[len(shortest_path)-1].y,shortest_path[len(shortest_path)-1].x
                             else:
-                                mapped_environment[current_y][current_x] = shortest_path[i+step_size]
+                                mapped_environment[current_y][current_x] = shortest_path[i+step_size].y,shortest_path[i+step_size].x
                     else:
                         # If it is last point we mark it with EXIT
                         if i == len(shortest_path)-1:
@@ -93,7 +93,8 @@ def direction_map(environment, exit_points , step_size, quality_direction_map=Fa
 
                                 # if we don't go through obstacle and over the exit we accept this point
                                 if possible_step_is_correct is True:
-                                    mapped_environment[current_y][current_x] = (point_to_go.x, point_to_go.y)
+                                    mapped_environment[current_y][current_x] = (point_to_go.y, point_to_go.x)
+
                                     break
     return mapped_environment
 
