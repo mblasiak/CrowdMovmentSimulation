@@ -2,6 +2,7 @@ from OpenGL.GL import *
 from math import *
 from model.agent.Agent import Agent
 
+
 class AgentGfx:
     def __init__(self, position: [float, float], map_position: [int, int], angle: float, color: [float, float, float],
                  direction, maze, direct):
@@ -9,9 +10,9 @@ class AgentGfx:
         self.position = position
         self.angle = radians(angle)
         self.color = color
-        exits=list( zip(range(40,60),[98]*20))
-        self.agent = Agent((map_position[0], map_position[1]),exits ,3 , 2, 1, direct, maze)
-        self.fx_pos=(0, 0)
+        exits = list(zip(range(40, 60), [98] * 20))
+        self.agent = Agent((map_position[0], map_position[1]), exits, 3, 2, 1, direct, maze)
+        self.fx_pos = (0, 0)
 
     def move(self):
         result = self.agent.move()
@@ -44,7 +45,7 @@ class AgentGfx:
             glVertex2f(cos(angle) * radius + posx, sin(angle) * radius + posy)
         glEnd()
 
-        # draw line
+        # draw direction line
         vec = [(direction[0] - self.position[0]), (direction[1] - self.position[1])]
 
         vec_len = sqrt(pow(vec[0], 2) + pow(vec[1], 2))
@@ -57,4 +58,3 @@ class AgentGfx:
         glVertex2f(self.position[0], self.position[1])
         glVertex2f(self.position[0] + vec[0], self.position[1] - vec[1])
         glEnd()
-
