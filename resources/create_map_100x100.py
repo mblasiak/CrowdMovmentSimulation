@@ -1,6 +1,6 @@
 from model.environment.environment import direction_map
 from model.environment.line import Point
-from resources.creator.DirectionMapToTxt import create_txt_form_direction_map
+from resources.handling.generating import create_txt_form_direction_map
 n = 100
 maze = [[0 for j in range(0, n)] for i in range(0, n)]
 
