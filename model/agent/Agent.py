@@ -5,7 +5,7 @@ from model.direction_map import DirectionMap
 from model.collisions.collision_map_tools import mark_location
 from model.environment.environment_enum import Env
 
-
+#TODO use one collision instead front and rear collison
 class Agent:
     def __init__(self, start_position: (int, int), end_position: [(int, int)], max_step: int,
                  front_collision_size: float,
@@ -16,7 +16,7 @@ class Agent:
         self.forward_move_angle = np.pi * (8 / 10)
         self.speed_keeping_preference = 0.6
         self.direction_keeping_preference = 1 - self.speed_keeping_preference
-        self.minmal_move_price = 0.05
+        self.minimal_move_price = 0.05
 
         self.start = start_position
         self.end = end_position
@@ -76,7 +76,7 @@ class Agent:
             return self.current_pos
 
         maxi = max(moves, key=lambda z: self.get_move_price(z))
-        if self.get_move_price(maxi) >= self.minmal_move_price:
+        if self.get_move_price(maxi) >= self.minimal_move_price:
             print('Used alternative move')
             return maxi
 
