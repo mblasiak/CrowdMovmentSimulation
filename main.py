@@ -12,6 +12,7 @@ if not glfw.init():
 
 window = glfw.create_window(1280, 720, "Modelowanie i Symulacja Systemów - Symulacja (0 FPS)", None, None)
 glfw.make_context_current(window)
+simulation_running = True
 
 if not window:
     glfw.terminate()
@@ -72,6 +73,9 @@ def key_callback(window, key, scancode, action, mods):
         camera_position[1] -= 10
     if key == glfw.KEY_UP and action == glfw.REPEAT:
         camera_position[1] += 10
+    if key == glfw.KEY_SPACE and action == glfw.PRESS:
+        global simulation_running
+        simulation_running = not (simulation_running and True)
 
 
 glfw.set_mouse_button_callback(window, mouse_button_callback)
@@ -86,7 +90,8 @@ while not glfw.window_should_close(window):
     frame_count += 1
 
     # if current_time - old_step_time >= 0.1:
-    agents.step()
+    if simulation_running:
+        agents.step()
     # old_step_time = current_time
 
     if current_time - previous_time >= 1.0:
