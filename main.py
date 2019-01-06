@@ -95,7 +95,8 @@ while not glfw.window_should_close(window):
     # old_step_time = current_time
 
     if current_time - previous_time >= 1.0:
-        glfw.set_window_title(window, "Modelowanie i Symulacja Systemów - Symulacja (" + str(frame_count) + " FPS)")
+        title="Crowd Simulation | " + str(frame_count) + " FPS | Number Of Agents: "+str(len(agents.agent_list)) + " |"
+        glfw.set_window_title(window, title)
         frame_count = 0
         previous_time = current_time
 
