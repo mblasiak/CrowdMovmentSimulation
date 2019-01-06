@@ -5,8 +5,10 @@ from model.direction_map import DirectionMap
 from model.collisions.collision_map_tools import mark_location
 from model.environment.environment_enum import Env
 
+
 class Agent:
-    def __init__(self, start_position: (int, int), end_position: [(int, int)], max_step: int, front_collision_size: float,
+    def __init__(self, start_position: (int, int), end_position: [(int, int)], max_step: int,
+                 front_collision_size: float,
                  rear_collision_size: float,
                  directions_map: DirectionMap,
                  collision_map: [[(int, int)]]):
@@ -40,11 +42,11 @@ class Agent:
 
                 if y >= len(self.collision_map) or x >= len(self.collision_map[y]):
                     continue
-
-                distance = nav.get_distance_beteween_points(self.current_pos, (y, x))
-                angle = nav.get_angle_of_direction_between_points(self.current_pos, (y, x))
-                if distance <= self.max_step and abs(angle - self.facing_angle) <= self.forward_move_angle / 2:
-                    available_points.append((y, x))
+                if self.collision_map[y][x]==0:
+                    distance = nav.get_distance_beteween_points(self.current_pos, (y, x))
+                    angle = nav.get_angle_of_direction_between_points(self.current_pos, (y, x))
+                    if distance <= self.max_step and abs(angle - self.facing_angle) <= self.forward_move_angle / 2:
+                        available_points.append((y, x))
 
         return available_points
 
@@ -56,26 +58,29 @@ class Agent:
         desired_angle = self.direction_map.get_angle(self.current_pos)
         desired_step = self.direction_map.get_step_size(self.current_pos)
 
-
-        price = (move_step_length % desired_step)/desired_step * self.speed_keeping_preference \
-                + (2*np.pi-(desired_angle-move_angle))/(2*np.pi) * self.direction_keeping_preference
+        price = (move_step_length % desired_step) / desired_step * self.speed_keeping_preference \
+                + (2 * np.pi - (desired_angle - move_angle)) / (2 * np.pi) * self.direction_keeping_preference
         return price
 
     def get_best_move(self, moves):
         desired_move = self.direction_map.get_next_position(self.current_pos)
 
-        if isinstance(desired_move,Env):
+        if isinstance(desired_move, Env):
             return self.current_pos
         if self.collision_map[desired_move[0]][desired_move[1]] == 0:
             return desired_move
 
         if len(moves) == 0:
+            print('Had no ther moves')
             return self.current_pos
 
         maxi = max(moves, key=lambda z: self.get_move_price(z))
         if self.get_move_price(maxi) >= self.minmal_move_price:
+            print('Used alternative move')
             return maxi
+
         else:
+            print('Used current pos')
             return self.current_pos
 
     def update_collision_map(self, value):
