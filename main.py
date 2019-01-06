@@ -2,14 +2,10 @@ import glfw
 from OpenGL.GL import *
 import random
 
-
 from model.direction_map.DirectionMap import DirectionMap
 from model.environment.line import Point
 from gfx.AgentMenager import AgentManager
-from resources.handling.reading import load_direction_from_file,load_map_from_file
-
-
-
+from resources.handling.reading import load_direction_from_file, load_map_from_file
 
 if not glfw.init():
     exit(1)
