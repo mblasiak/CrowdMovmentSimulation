@@ -2,10 +2,10 @@
 
 def create_txt_form_direction_map(path_filename, direction_map):
     f = open(path_filename, "w+")
-    for tab in direction_map:
-        for ele in tab:
-            f.write(str(ele))
+    for line in direction_map:
+        for point in line:
+            f.write(str(point))
             f.write(' ')
         f.write('\n')
-
+    f.close()
 

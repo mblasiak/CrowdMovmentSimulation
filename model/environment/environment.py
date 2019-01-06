@@ -93,7 +93,7 @@ def direction_map(environment, exit_points , step_size, quality_direction_map=Fa
 
                                 # if we don't go through obstacle and over the exit we accept this point
                                 if possible_step_is_correct is True:
-                                    mapped_environment[current_y][current_x] = point_to_go
+                                    mapped_environment[current_y][current_x] = (point_to_go.x, point_to_go.y)
                                     break
     return mapped_environment
 
