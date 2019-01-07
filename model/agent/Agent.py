@@ -5,7 +5,8 @@ from model.direction_map import DirectionMap
 from model.collisions.collision_map_tools import mark_location
 from model.environment.environment_enum import Env
 
-#TODO use one collision instead front and rear collison
+
+# TODO use one collision instead front and rear collison
 class Agent:
     def __init__(self, start_position: (int, int), end_position: [(int, int)], max_step: int,
                  front_collision_size: float,
@@ -31,8 +32,9 @@ class Agent:
         self.move_counter = 0
         self.add_position_to_collision_map()
 
-    def update_facing_angle(self):
-        self.facing_angle = self.direction_map.get_angle(self.current_pos)
+    def update_facing_angle(self,new_pos):
+        self.facing_angle=nav.get_angle_of_direction_between_points(self.current_pos,new_pos)
+
 
     def get_available_moves(self):
         available_points = []
@@ -43,7 +45,7 @@ class Agent:
 
                 if y >= len(self.collision_map) or x >= len(self.collision_map[y]):
                     continue
-                if self.collision_map[y][x]==0:
+                if self.collision_map[y][x] == 0:
                     distance = nav.get_distance_beteween_points(self.current_pos, (y, x))
                     angle = nav.get_angle_of_direction_between_points(self.current_pos, (y, x))
                     if distance <= self.max_step and abs(angle - self.facing_angle) <= self.forward_move_angle / 2:
@@ -53,6 +55,8 @@ class Agent:
 
     def get_move_price(self, pos: (int, int)) -> float:
 
+        if pos == Env.EXIT:
+            return 256
         move_angle = nav.get_angle_of_direction_between_points(self.current_pos, pos)
         move_step_length = nav.get_distance_beteween_points(self.current_pos, pos)
 
@@ -67,7 +71,8 @@ class Agent:
         desired_move = self.direction_map.get_next_position(self.current_pos)
 
         if isinstance(desired_move, Env):
-            return self.current_pos
+            return desired_move
+
         if self.collision_map[desired_move[0]][desired_move[1]] == 0:
             return desired_move
 
@@ -106,20 +111,17 @@ class Agent:
 
         best_pos = self.get_best_move(available_positions)
 
-        self.current_pos = best_pos
-        self.update_facing_angle()
-        self.add_position_to_collision_map()
-
-        if self.check_if_finish_has_been_reached():
-            self.clear_position_to_collision_map()
+        if self.check_if_finish_will_be_reached(best_pos):
             return 1
+        self.update_facing_angle(best_pos)
+        self.current_pos = best_pos
+        self.add_position_to_collision_map()
 
         self.move_counter = self.move_counter + 1
         return 0
 
-    def check_if_finish_has_been_reached(self):
-
-        if self.current_pos in self.end:
+    def check_if_finish_will_be_reached(self, pos):
+        if isinstance(pos, Env) and pos == Env.EXIT:
             return True
         else:
             return False
