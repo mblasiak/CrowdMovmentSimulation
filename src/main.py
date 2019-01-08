@@ -1,7 +1,8 @@
 import time
 
-from environment.a_star import astar
 from environment.line import Point, Line
+from environment.environment import direction_map
+
 
 maze = [[0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
@@ -92,7 +93,21 @@ for i in range(88, 100):
 
 t1 = time.time()
 
-#f= open("direction_map.txt", "w+")
+f= open("direction_map.txt", "w+")
+
+points = []
+for i in range(40,60):
+    points.append(Point(99, i))
+
+for tab in (direction_map(d, points, 1)):
+    print(tab)
+#     for p in tab:
+#         f.write(str(p))
+#         f.write(" ")
+#     f.write("\n")
+#
+# f.close()
+
 
 
 
