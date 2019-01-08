@@ -7,11 +7,15 @@ from .line import Point
 def astar(maze, start, end):
     """Returns a list of points in fastest path"""
 
+
     # Change points to tuples, since it works faster
-    start = (start.y, start.x)
-    end = (end.y, end.x)
+    if isinstance(start, Point) and isinstance(end, Point):
+        start = (start.y, start.x)
+        end = (end.y, end.x)
 
     # Create start and end node
+    if maze[start[0]][start[1]] != 0:
+        return []
     start_node = Node(None, start)
     start_node.g = start_node.h = start_node.f = 0
     end_node = Node(None, end)
@@ -73,7 +77,8 @@ def astar(maze, start, end):
 
             # Create the f, g, and h values
             new_node.g = current_node.g + 1
-            new_node.h = diagonal_distance_heuristics(Point(new_node.position[1], new_node.position[0]), Point(end[1], end[0]))
+            new_node.h = diagonal_distance_heuristics(Point(new_node.position[1], new_node.position[0]),
+                                                      Point(end[1], end[0]))
             new_node.f = new_node.g + new_node.h
 
         # Loop through children
@@ -85,7 +90,7 @@ def astar(maze, start, end):
 
             # Child is already in the open list
             skip = False
-            for index,open_node in enumerate(open_list):
+            for index, open_node in enumerate(open_list):
                 if open_node.position == child.position:
                     if open_node.f > child.f or (child.f == open_node.f and child.h < open_node.f):
                         open_list.pop(index)
@@ -98,6 +103,7 @@ def astar(maze, start, end):
 
             # Add the child to the open list
             open_list.append(child)
+    return []
 
 
 def diagonal_distance_heuristics(current, end):  # (Point, Point)
