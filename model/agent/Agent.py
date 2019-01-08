@@ -55,7 +55,7 @@ class Agent:
 
     def get_move_price(self, pos: (int, int)) -> float:
 
-        if pos == Env.EXIT:
+        if self.direction_map[pos[0]][pos[1]]==Env.EXIT:
             return 256
         move_angle = nav.get_angle_of_direction_between_points(self.current_pos, pos)
         move_step_length = nav.get_distance_beteween_points(self.current_pos, pos)
