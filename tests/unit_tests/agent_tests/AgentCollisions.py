@@ -2,10 +2,10 @@ import unittest
 
 import numpy as np
 
-from src.agent.Agent import Agent
-from src.environment.environment import direction_map
-from src.environment.line import Point
-from src.direction_map.DirectionMap import DirectionMap
+from model.agent.Agent import Agent
+from model.environment.environment import direction_map
+from model.environment.line import Point
+from model.direction_map.DirectionMap import DirectionMap
 from tests.tesing_tools.list_comparator.compare_lists import compare_lists
 from tests.tesing_tools.print_list_diffrances.print_list_diffrances import print_2D_list_difrances
 

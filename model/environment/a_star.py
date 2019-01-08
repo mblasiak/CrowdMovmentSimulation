@@ -1,7 +1,7 @@
 import numpy
 
 
-from environment.line import Point
+from .line import Point
 
 
 def astar(maze, start, end):

@@ -1,6 +1,6 @@
 # Mark fileds on collision_map by adding to them given value
 # Ignores marking out of map boundries
-import src.navigator.navigator as nav
+import model.navigator.navigator as nav
 
 
 def mark_location(location: (int, int), collision_map, marking_value: int):

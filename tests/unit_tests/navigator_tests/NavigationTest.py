@@ -1,5 +1,5 @@
 import unittest
-import src.navigator.navigator as nav
+import model.navigator.navigator as nav
 import numpy as np
 
 
