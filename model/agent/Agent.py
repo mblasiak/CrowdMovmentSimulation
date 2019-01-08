@@ -69,13 +69,12 @@ class Agent:
 
     def get_best_move(self, moves):
 
-        # closest_exit=min(self.end, key=lambda exit: nav.get_distance_beteween_points(self.current_pos, exit))
-        # desired_move=astar(self.collision_map,self.current_pos,self.end)
-        # print(closest_exit)
-        desired_move = self.direction_map.get_next_position(self.current_pos)
-
-        if isinstance(desired_move, Env):
-            return desired_move
+        closest_exit = min(self.end, key=lambda exit: nav.get_distance_beteween_points(self.current_pos, exit))
+        desireds = astar(self.collision_map, closest_exit, self.current_pos)
+        desireds = desireds[::-1]
+        if (len(desireds) < 1):
+            return self.current_pos
+        desired_move = desireds[1].y, desireds[1].x
 
         if self.collision_map[desired_move[0]][desired_move[1]] == 0:
             return desired_move
@@ -125,7 +124,7 @@ class Agent:
         return 0
 
     def check_if_finish_will_be_reached(self, pos):
-        if isinstance(pos, Env) and pos == Env.EXIT:
+        if pos in self.end:
             return True
         else:
             return False
