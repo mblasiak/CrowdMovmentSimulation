@@ -10,7 +10,7 @@ class AgentGfx:
         self.position = position
         self.angle = radians(angle)
         self.color = color
-        exits = list(zip(range(40, 60), [98] * 20))
+        exits = list(zip(range(40, 60), [99] * 20))
         self.agent = Agent((map_position[0], map_position[1]), exits, 3, 2, 1, direct, maze)
         self.fx_pos = (0, 0)
 
