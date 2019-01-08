@@ -4,6 +4,7 @@ import model.navigator.navigator as nav
 from model.direction_map import DirectionMap
 from model.collisions.collision_map_tools import mark_location
 from model.environment.environment_enum import Env
+from model.environment.a_star import astar
 
 
 # TODO use one collision instead front and rear collison
@@ -32,9 +33,8 @@ class Agent:
         self.move_counter = 0
         self.add_position_to_collision_map()
 
-    def update_facing_angle(self,new_pos):
-        self.facing_angle=nav.get_angle_of_direction_between_points(self.current_pos,new_pos)
-
+    def update_facing_angle(self, new_pos):
+        self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, new_pos)
 
     def get_available_moves(self):
         available_points = []
@@ -55,7 +55,7 @@ class Agent:
 
     def get_move_price(self, pos: (int, int)) -> float:
 
-        if self.direction_map[pos[0]][pos[1]]==Env.EXIT:
+        if self.direction_map.direction_map[pos[0]][pos[1]] == Env.EXIT:
             return 256
         move_angle = nav.get_angle_of_direction_between_points(self.current_pos, pos)
         move_step_length = nav.get_distance_beteween_points(self.current_pos, pos)
@@ -68,6 +68,10 @@ class Agent:
         return price
 
     def get_best_move(self, moves):
+
+        # closest_exit=min(self.end, key=lambda exit: nav.get_distance_beteween_points(self.current_pos, exit))
+        # desired_move=astar(self.collision_map,self.current_pos,self.end)
+        # print(closest_exit)
         desired_move = self.direction_map.get_next_position(self.current_pos)
 
         if isinstance(desired_move, Env):
