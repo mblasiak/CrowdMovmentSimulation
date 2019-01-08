@@ -7,6 +7,8 @@ from model.environment.line import Point
 from gfx.AgentMenager import AgentManager
 from resources.handling.reading import load_direction_from_file, load_map_from_file
 
+from random import randint
+
 if not glfw.init():
     exit(1)
 
@@ -179,5 +181,8 @@ while not glfw.window_should_close(window):
     agents.draw_all()
 
     glfw.swap_buffers(window)
+
+    pos = [randint(1, 99), 1]
+    agents.add_new(pos, 33.0, [.0, .0, .9])
 
 glfw.terminate()
