@@ -73,7 +73,8 @@ def astar(maze, start, end):
 
             # Create the f, g, and h values
             new_node.g = current_node.g + 1
-            new_node.h = diagonal_distance_heuristics(Point(new_node.position[1], new_node.position[0]), Point(end[1], end[0]))
+            new_node.h = diagonal_distance_heuristics(Point(new_node.position[1], new_node.position[0]),
+                                                      Point(end[1], end[0]))
             new_node.f = new_node.g + new_node.h
 
         # Loop through children
@@ -85,7 +86,7 @@ def astar(maze, start, end):
 
             # Child is already in the open list
             skip = False
-            for index,open_node in enumerate(open_list):
+            for index, open_node in enumerate(open_list):
                 if open_node.position == child.position:
                     if open_node.f > child.f or (child.f == open_node.f and child.h < open_node.f):
                         open_list.pop(index)
@@ -98,6 +99,7 @@ def astar(maze, start, end):
 
             # Add the child to the open list
             open_list.append(child)
+    return []
 
 
 def diagonal_distance_heuristics(current, end):  # (Point, Point)
