@@ -7,11 +7,15 @@ from .line import Point
 def astar(maze, start, end):
     """Returns a list of points in fastest path"""
 
+
     # Change points to tuples, since it works faster
-    start = (start.y, start.x)
-    end = (end.y, end.x)
+    if isinstance(start, Point) and isinstance(end, Point):
+        start = (start.y, start.x)
+        end = (end.y, end.x)
 
     # Create start and end node
+    if maze[start[0]][start[1]] != 0:
+        return []
     start_node = Node(None, start)
     start_node.g = start_node.h = start_node.f = 0
     end_node = Node(None, end)
