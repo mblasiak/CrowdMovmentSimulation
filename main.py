@@ -182,7 +182,8 @@ while not glfw.window_should_close(window):
 
     glfw.swap_buffers(window)
 
-    pos = [randint(1, 99), 1]
-    agents.add_new(pos, 33.0, [.0, .0, .9])
+    #Automatic agent spawning
+    #pos = [randint(1, 99), 1]
+    #agents.add_new(pos, 33.0, [.0, .0, .9])
 
 glfw.terminate()
