@@ -48,7 +48,7 @@ class AgentGfx:
         # draw direction line
         vec = [(direction[0] - self.position[0]), (direction[1] - self.position[1])]
 
-        vec_len = sqrt(pow(vec[0], 2) + pow(vec[1], 2))
+        vec_len = sqrt(pow(vec[0], 2) + pow(vec[1], 2))/5
         vec[0] = vec[0] / vec_len * radius
         vec[1] = vec[1] / vec_len * radius
 
