@@ -6,6 +6,7 @@ from model.direction_map.DirectionMap import DirectionMap
 from model.environment.line import Point
 from gfx.AgentMenager import AgentManager
 from resources.handling.reading import load_direction_from_file, load_map_from_file
+from model.gradient.gradient_map import gradient_from_direction_map
 
 from random import randint
 
@@ -29,8 +30,9 @@ for i in range(40, 60):
     exit_points.append(Point(99, i))
 
 # directions = direction_map(maze, exit_points, 1)
-directions = load_direction_from_file("resources/ready/directios100x100yx.txt")
-direct = DirectionMap(directions)
+directions = gradient_from_direction_map("resources/ready/directios100x100yx.txt")
+
+direct = directions
 
 free_color = [25, 25, 25]
 collision_color = [128, 0, 0]

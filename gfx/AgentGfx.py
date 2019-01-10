@@ -1,11 +1,11 @@
 from OpenGL.GL import *
 from math import *
-from model.agent.Agent import Agent
+from model.gradient_agent.Agent import Agent
 
 
 class AgentGfx:
     def __init__(self, position: [float, float], map_position: [int, int], angle: float, color: [float, float, float],
-                 direction, maze, direct):
+                 maze, direct):
         self.map_position = map_position
         self.position = position
         self.angle = radians(angle)
