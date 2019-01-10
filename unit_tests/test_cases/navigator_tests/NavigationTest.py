@@ -5,6 +5,8 @@ import numpy as np
 
 class TestDirection(unittest.TestCase):
 
+#Using (y,x) notation
+
     def test_horizonta_direction(self):
         self.assertEqual(nav.get_direction_to_another_point((3, 0), (5, 0)), (2, 0), "Horizontal direction")
 
@@ -31,15 +33,15 @@ class TestAngle(unittest.TestCase):
                          "Angle of line orgin--(1,1)=45dgr")
 
     def test_vertical_angle(self):
-        self.assertEqual(nav.get_angle_of_direction_between_points((0, 0), (0, 4)), np.pi / 2,
-                         "Angle of line orgin--(1,1)=45dgr")
+        self.assertEqual(nav.get_angle_of_direction_between_points((0, 0), (4, 0)), np.pi / 2,
+                         "Angle of line orgin--(4,1)=45dgr")
 
     def test_angle_ablove_90dgrs(self):
-        self.assertEqual(nav.get_angle_of_direction_between_points((0, 0), (-1, 1)), np.pi * (3 / 4),
-                         "Angle of line orgin--(-1,1)=(90+45)dgr")
+        self.assertEqual(nav.get_angle_of_direction_between_points((0, 0), (1, -1)), np.pi * (3 / 4),
+                         "Angle of line orgin--(1,-1)=(90+45)dgr")
 
     def test_angle_ablove_110dgrs(self):
-        self.assertAlmostEqual(nav.get_angle_of_direction_between_points((0, 0), (-1, 2 * 3 ** (1 / 2) / 2)), np.deg2rad(120), 12,
+        self.assertAlmostEqual(nav.get_angle_of_direction_between_points((0, 0), ( 2 * 3 ** (1 / 2) / 2,-1)), np.deg2rad(120), 12,
                          "Angle of line")
 
 

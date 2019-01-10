@@ -4,7 +4,8 @@ import unittest
 import numpy as np
 
 from model.collisions.collision_map_tools import mark_squere_obstacle, mark_location, mark_circle_obstacle
-from tests.tesing_tools.list_comparator.compare_lists import compare_lists
+from unit_tests.tesing_tools.list_comparator.compare_lists import compare_lists
+
 
 class TestMarking(unittest.TestCase):
 
@@ -87,6 +88,3 @@ class ObstacleAdding(unittest.TestCase):
 
         mark_circle_obstacle((2, 2), 1, self.collision_map, 1)
         self.assertTrue(compare_lists(desired_result, self.collision_map))
-
-
-
