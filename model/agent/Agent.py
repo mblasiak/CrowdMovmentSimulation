@@ -24,7 +24,7 @@ class Agent:
         self.direction_keeping_preference = 1 - self.speed_keeping_preference
         self.minimal_move_price = 0.05
 
-        self.realese_space()
+        self.release_space()
 
     def update_facing_angle(self, new_pos):
         self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, new_pos)
@@ -93,7 +93,7 @@ class Agent:
     def block_space(self):
         self.update_collisions(-1)
 
-    def realese_space(self):
+    def release_space(self):
         self.update_collisions(1)
 
     def move(self):
@@ -102,15 +102,15 @@ class Agent:
 
         best_pos = self.get_best_move(available_positions)
 
-        if self.check_if_finish_will_be_reached(best_pos):
+        if self.finished_reached(best_pos):
             return 1
         self.update_facing_angle(best_pos)
         self.current_pos = best_pos
-        self.realese_space()
+        self.release_space()
 
         return 0
 
-    def check_if_finish_will_be_reached(self, pos):
+    def finished_reached(self, pos):
         if isinstance(pos, Env) and pos == Env.EXIT:
             return True
         else:
