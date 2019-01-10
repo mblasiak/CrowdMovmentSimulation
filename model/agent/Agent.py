@@ -4,16 +4,11 @@ import model.navigator.navigator as nav
 from model.direction_map import DirectionMap
 from model.collisions.collision_map_tools import mark_location
 from model.environment.environment_enum import Env
-from model.environment.a_star import astar
 
 
-# TODO use one collision instead front and rear collison
 class Agent:
-    def __init__(self, start_position: (int, int), end_position: [(int, int)], max_step: int,
-                 front_collision_size: float,
-                 rear_collision_size: float,
-                 directions_map: DirectionMap,
-                 collision_map: [[(int, int)]]):
+    def __init__(self, start_position: (int, int), end_position: [(int, int)], directions_map: DirectionMap,
+                 collision_map: [[(int, int)]], bound_size=2, max_step=1, ):
 
         self.forward_move_angle = np.pi * (8 / 10)
         self.speed_keeping_preference = 0.6
@@ -25,12 +20,10 @@ class Agent:
         self.current_pos = self.start
         self.max_step = max_step
 
-        self.front_collision_size = front_collision_size
-        self.rear_collision_size = rear_collision_size
+        self.front_collision_size = bound_size
         self.direction_map = directions_map
         self.collision_map = collision_map
         self.facing_angle = directions_map.get_angle(self.current_pos)
-        self.move_counter = 0
         self.add_position_to_collision_map()
 
     def update_facing_angle(self, new_pos):
@@ -121,7 +114,6 @@ class Agent:
         self.current_pos = best_pos
         self.add_position_to_collision_map()
 
-        self.move_counter = self.move_counter + 1
         return 0
 
     def check_if_finish_will_be_reached(self, pos):
