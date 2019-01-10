@@ -27,7 +27,7 @@ class Agent:
         self.release_space()
 
     def update_facing_angle(self, new_pos):
-        self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, new_pos)
+        self.facing_angle = self.direction_map.get_angle(self.current_pos)
 
     def get_available_moves(self):
         available_points = []
