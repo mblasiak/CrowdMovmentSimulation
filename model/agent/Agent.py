@@ -10,21 +10,21 @@ class Agent:
     def __init__(self, start_position: (int, int), end_position: [(int, int)], directions_map: DirectionMap,
                  collision_map: [[(int, int)]], bound_size=2, max_step=1, ):
 
+        self.start = start_position
+        self.end = end_position
+        self.current_pos = self.start
+        self.max_step = max_step
+        self.front_collision_size = bound_size
+        self.direction_map = directions_map
+        self.collision_map = collision_map
+        self.facing_angle = directions_map.get_angle(self.current_pos)
+
         self.forward_move_angle = np.pi * (8 / 10)
         self.speed_keeping_preference = 0.6
         self.direction_keeping_preference = 1 - self.speed_keeping_preference
         self.minimal_move_price = 0.05
 
-        self.start = start_position
-        self.end = end_position
-        self.current_pos = self.start
-        self.max_step = max_step
-
-        self.front_collision_size = bound_size
-        self.direction_map = directions_map
-        self.collision_map = collision_map
-        self.facing_angle = directions_map.get_angle(self.current_pos)
-        self.add_position_to_collision_map()
+        self.realese_space()
 
     def update_facing_angle(self, new_pos):
         self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, new_pos)
@@ -62,9 +62,6 @@ class Agent:
 
     def get_best_move(self, moves):
 
-        # closest_exit=min(self.end, key=lambda exit: nav.get_distance_beteween_points(self.current_pos, exit))
-        # desired_move=astar(self.collision_map,self.current_pos,self.end)
-        # print(closest_exit)
         desired_move = self.direction_map.get_next_position(self.current_pos)
 
         if isinstance(desired_move, Env):
@@ -86,24 +83,21 @@ class Agent:
             print('Used current pos')
             return self.current_pos
 
-    def update_collision_map(self, value):
+    def update_collisions(self, value):
         current_y, current_x = self.current_pos
         collision = self.front_collision_size
         for x in range(current_x - collision, current_x + collision + 1):
             for y in range(current_y - collision, current_y + collision + 1):
                 mark_location((y, x), self.collision_map, value)
 
-    def clear_position_to_collision_map(self):
-        self.update_collision_map(-1)
+    def block_space(self):
+        self.update_collisions(-1)
 
-    def add_position_to_collision_map(self):
-        self.update_collision_map(1)
-
-    def get_possible_move(self):
-        return self.get_best_move(self.get_available_moves())
+    def realese_space(self):
+        self.update_collisions(1)
 
     def move(self):
-        self.clear_position_to_collision_map()
+        self.block_space()
         available_positions = self.get_available_moves()
 
         best_pos = self.get_best_move(available_positions)
@@ -112,7 +106,7 @@ class Agent:
             return 1
         self.update_facing_angle(best_pos)
         self.current_pos = best_pos
-        self.add_position_to_collision_map()
+        self.realese_space()
 
         return 0
 
