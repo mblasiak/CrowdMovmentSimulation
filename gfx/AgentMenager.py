@@ -33,19 +33,16 @@ class AgentManager:
             agent.draw(self.agent_radius)
 
     def add_new(self, position: [int, int], angle: float, color: [float, float, float]):
-        for agent in self.agent_list:
-            if agent.map_position == position:
-                print("Nie mozna dodac agenta na tej pozycji!")
-                return
 
         correct_pos = [
             0 + self.offset + 1 + (position[1] * self.tile_size[0]) + (self.tile_size[0] / 2),
             self.height - self.offset - 1 - (position[0] * self.tile_size[1]) - (self.tile_size[1] / 2)
         ]
 
-        dir_x, dir_y = self.direction_map[position[0]][position[1]]
-
-        self.agent_list.append(AgentGfx(correct_pos, position, angle, color, [dir_x, dir_y], self.maze, self.direct))
+        if self.maze[position[0]][position[1]]==0:
+            self.agent_list.append(AgentGfx(correct_pos, position, angle, color, self.maze, self.direct))
+        else:
+            print('Agent can not be adde on this pos')
 
     def step(self):
         for agent in self.agent_list:
@@ -56,7 +53,7 @@ class AgentManager:
             agent.fx_pos = [
                 0 + self.offset + 1 + (agent.map_position[1] * self.tile_size[0]) + (self.tile_size[0] / 2),
                 self.height - self.offset - 1 - (agent.map_position[0] * self.tile_size[1]) - (
-                            self.tile_size[1] / 2)
+                        self.tile_size[1] / 2)
             ]
 
             agent.position = agent.fx_pos
