@@ -21,7 +21,7 @@ class Agent:
 
         self.forward_move_angle = np.pi * (8 / 10)
         self.minimal_move_price = 0.05
-
+        self.anger = 0;
         self.block_space()
 
     def update_facing_angle(self, nex_move):
@@ -106,9 +106,18 @@ class Agent:
         best_pos = self.get_best_move(available_positions)
 
         if self.finished_reached(best_pos):
-            return 1
+            raise ExitReached
+        if best_pos == self.current_pos:
+            self.anger += 1
+        else:
+            self.anger=0
         self.update_facing_angle(best_pos)
         self.current_pos = best_pos
         self.block_space()
 
         return 0
+
+
+class ExitReached(Exception):
+    def __init__(self):
+        super().__init__()

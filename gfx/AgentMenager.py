@@ -1,5 +1,5 @@
 from gfx.AgentGfx import AgentGfx
-
+from model.agent.Agent import ExitReached
 
 class AgentManager:
     def __init__(self, initial_tile_size: [float, float], client_width: int, client_height: int, map_offset: int,
@@ -46,7 +46,10 @@ class AgentManager:
 
     def step(self):
         for agent in self.agent_list:
-            if agent.move():
+
+            try:
+                agent.move()
+            except ExitReached:
                 self.agent_list.remove(agent)
 
             agent.map_position = agent.agent.current_pos
