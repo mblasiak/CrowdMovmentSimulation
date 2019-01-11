@@ -19,7 +19,7 @@ class Agent:
         self.collision_map = collision_map
         self.facing_angle = directions_map.get_angle(self.current_pos)
 
-        self.forward_move_angle = np.pi * (8 / 10)
+        self.forward_move_angle = np.pi * (10 / 10)
         self.minimal_move_price = 0.05
         self.anger = 0;
         self.block_space()
@@ -48,7 +48,7 @@ class Agent:
 
                     if angle_diff > np.pi:
                         angle_diff = abs(angle_diff - np.pi)
-
+                    # TODO Dlaczego mogą zawrócić gdy nie maja dostępu do swojej pozycjia tym barziej żę ta pozycaj jest poza kontem
                     if distance <= self.max_step and angle_diff <= self.forward_move_angle / 2:
                         available_points.append((y, x))
 
@@ -110,12 +110,12 @@ class Agent:
         if best_pos == self.current_pos:
             self.anger += 1
         else:
-            self.anger=0
+            self.anger = 0
         self.update_facing_angle(best_pos)
         self.current_pos = best_pos
         self.block_space()
 
-        return 0
+        return self.anger
 
 
 class ExitReached(Exception):
