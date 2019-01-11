@@ -20,14 +20,11 @@ class Agent:
         self.facing_angle = directions_map.get_angle(self.current_pos)
 
         self.forward_move_angle = np.pi * (8 / 10)
-        self.speed_keeping_preference = 0.6
-        self.direction_keeping_preference = 1 - self.speed_keeping_preference
         self.minimal_move_price = 0.05
 
         self.block_space()
 
     def update_facing_angle(self, nex_move):
-
         if nex_move == self.current_pos:
             self.facing_angle = self.direction_map.get_angle(self.current_pos)
         else:
@@ -95,6 +92,13 @@ class Agent:
     def block_space(self):
         self.update_collisions(1)
 
+    def finished_reached(self, pos):
+        pos = self.direction_map.direction_map[pos[0]][pos[1]]
+        if isinstance(pos, Env) and pos == Env.EXIT:
+            return True
+        else:
+            return False
+
     def move(self):
         self.release_spce()
         available_positions = self.get_possible_moves()
@@ -108,10 +112,3 @@ class Agent:
         self.block_space()
 
         return 0
-
-    def finished_reached(self, pos):
-        pos = self.direction_map.direction_map[pos[0]][pos[1]]
-        if isinstance(pos, Env) and pos == Env.EXIT:
-            return True
-        else:
-            return False
