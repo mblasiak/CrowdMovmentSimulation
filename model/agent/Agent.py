@@ -24,7 +24,7 @@ class Agent:
         self.direction_keeping_preference = 1 - self.speed_keeping_preference
         self.minimal_move_price = 0.05
 
-        self.release_space()
+        self.block_space()
 
     def update_facing_angle(self, nex_move):
 
@@ -33,7 +33,7 @@ class Agent:
         else:
             self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, nex_move)
 
-    def get_available_moves(self):
+    def get_possible_moves(self):
         available_points = []
         (a_y, a_x) = self.current_pos
 
@@ -43,9 +43,11 @@ class Agent:
                 if y >= len(self.collision_map) or x >= len(self.collision_map[y]):
                     continue
                 if self.collision_map[y][x] == 0:
+
                     distance = nav.get_distance_beteween_points(self.current_pos, (y, x))
                     angle = nav.get_angle_of_direction_between_points(self.current_pos, (y, x))
-                    angle_diff = abs(angle - self.facing_angle)
+                    desired_angle = self.direction_map.get_angle(self.current_pos)
+                    angle_diff = abs(angle - desired_angle)
 
                     if angle_diff > np.pi:
                         angle_diff = abs(angle_diff - np.pi)
@@ -55,16 +57,13 @@ class Agent:
 
         return available_points
 
-    def get_move_price(self, pos: (int, int)) -> float:
-
+    def move_price(self, pos: (int, int)) -> float:
         if self.direction_map.direction_map[pos[0]][pos[1]] == Env.EXIT:
             return 256
-
-        price = 1/(nav.get_distance_beteween_points(self.direction_map.get_next_position(self.current_pos),pos))
+        price = (nav.get_distance_beteween_points(self.direction_map.get_next_position(self.current_pos), pos))
         return price
 
     def get_best_move(self, moves):
-
         desired_move = self.direction_map.get_next_position(self.current_pos)
 
         if isinstance(desired_move, Env):
@@ -74,16 +73,13 @@ class Agent:
             return desired_move
 
         if len(moves) == 0:
-            print('Had no ther moves')
             return self.current_pos
 
-        maxi = max(moves, key=lambda z: self.get_move_price(z))
-        if self.get_move_price(maxi) >= self.minimal_move_price:
-            print('Used alternative move')
+        maxi = min(moves, key=lambda z: self.move_price(z))
+        if self.move_price(maxi) >= self.minimal_move_price:
             return maxi
 
         else:
-            print('Used current pos')
             return self.current_pos
 
     def update_collisions(self, value):
@@ -93,15 +89,15 @@ class Agent:
             for y in range(current_y - collision, current_y + collision + 1):
                 mark_location((y, x), self.collision_map, value)
 
-    def block_space(self):
+    def release_spce(self):
         self.update_collisions(-1)
 
-    def release_space(self):
+    def block_space(self):
         self.update_collisions(1)
 
     def move(self):
-        self.block_space()
-        available_positions = self.get_available_moves()
+        self.release_spce()
+        available_positions = self.get_possible_moves()
 
         best_pos = self.get_best_move(available_positions)
 
@@ -109,11 +105,12 @@ class Agent:
             return 1
         self.update_facing_angle(best_pos)
         self.current_pos = best_pos
-        self.release_space()
+        self.block_space()
 
         return 0
 
     def finished_reached(self, pos):
+        pos = self.direction_map.direction_map[pos[0]][pos[1]]
         if isinstance(pos, Env) and pos == Env.EXIT:
             return True
         else:
