@@ -60,9 +60,11 @@ exits = []
 for i in range(40, 60):
     exits.append(Point(99, i))
 
+exits = [Point(99, 50)]
+
 print('Generating directions')
 directions = direction_map(maze, exits, 1)
 print('Directions generated')
 print('Tralsating directions to txt')
-create_txt_form_direction_map("ready/directios100x100yx.txt", directions)
+create_txt_form_direction_map("ready/directios100x100yxWith1Exit.txt", directions)
 print('Map has been saved')

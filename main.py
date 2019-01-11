@@ -30,7 +30,7 @@ for i in range(40, 60):
     exit_points.append(Point(99, i))
 
 # directions = direction_map(maze, exit_points, 1)
-directions = gradient_from_direction_map("resources/ready/directios100x100yx.txt")
+directions = gradient_from_direction_map("resources/ready/directios100x100yxWith1Exit.txt")
 
 direct = directions
 

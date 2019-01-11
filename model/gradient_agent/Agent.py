@@ -18,9 +18,13 @@ class Agent:
         self.collision_map = collision_map
         self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, end_position[0])
 
-        self.value = 10
+        self.angry_value = 0
+        self.angry_value_threshold = 2
 
-        self.update_gradient(self.value)
+        self.value_threshold = 10
+        self.value = self.value_threshold
+
+        self.update_gradient(self.value + self.angry_value)
 
     def update_facing_angle(self, new_pos):
         self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, new_pos)
@@ -40,15 +44,15 @@ class Agent:
                         y <= 0 or x <= 0:
                     continue
 
+                if self.direction_map[y][x] == Env.OBSTACLE or self.direction_map[y][x] == Env.EXIT:
+                    continue
+
                 # If spot is free and if spot has lower gradient value then the current_pos we add it
-                if self.collision_map[y][x] == 0:
-                    if self.direction_map[y][x] < self.direction_map[self.current_pos[0]][self.current_pos[1]]:
-                        # we create list of ( gradient_value, (y, x) )
-                        available_spots.append((self.direction_map[y][x], (y, x)))
+                if self.direction_map[y][x] < self.direction_map[self.current_pos[0]][self.current_pos[1]]:
+                    # we create list of ( gradient_value, (y, x) )
+                    available_spots.append((self.direction_map[y][x], (y, x)))
 
         available_spots.sort()
-        # for i in range(0, len(available_spots)):
-        #     available_spots[i] = available_spots[i][1]
 
         return available_spots
 
@@ -57,6 +61,19 @@ class Agent:
         if len(available_spots) == 0:
             return None
 
+        for i in range(0, len(available_spots)):
+            a_y, a_x = available_spots[i][1]
+            if self.collision_map[a_y][a_x] == 0:
+                if i == 0:
+                    self.angry_value = 0
+                return available_spots[i][1]
+            else:
+                self.angry_value += self.angry_value_threshold
+
+        return None
+
+        # TODO to narzie nie uzywane ale moze sie przyda
+        print("tutaj nie powininismy dojsc")
         lowest_gradient_value = available_spots[0][0]
 
         lowest_gradient_spots = []
@@ -87,20 +104,24 @@ class Agent:
         self.collision_map[position[0]][position[1]] = 0
 
     def update_gradient(self, value):
-        for y in range(self.current_pos[0]-1, self.current_pos[0]+2):
-            for x in range(self.current_pos[1]-1, self.current_pos[1]+2):
+        for y in range(self.current_pos[0]-2, self.current_pos[0]+3):
+            for x in range(self.current_pos[1]-2, self.current_pos[1]+3):
 
+                # If we this is current spot we double value here
                 if y == self.current_pos[0] and x == self.current_pos[1]:
                     self.direction_map[y][x] += 2*value
+                    continue
 
                 # If we out of range we skip
                 if y >= len(self.collision_map) or x >= len(self.collision_map[0]) or \
                         y <= 0 or x <= 0:
                     continue
 
+                # If spot is obstacle or exit we skip
                 if self.direction_map[y][x] == Env.EXIT or self.direction_map[y][x] == Env.OBSTACLE:
                     continue
 
+                # Normal situation
                 self.direction_map[y][x] += value
 
     def move(self):
@@ -113,23 +134,21 @@ class Agent:
         if best_pos is None:
             self.block_point(self.current_pos)
             self.value += self.value
-            self.update_gradient(self.value)
+            self.update_gradient(self.value + self.angry_value)
             return 0
 
         if best_pos == Env.EXIT or self.direction_map[best_pos[0]][best_pos[1]] == 0 or best_pos[1] > 96:
-            self.update_gradient(-self.value)
+            self.update_gradient(-(self.value + self.angry_value))
             return 1
-
 
         self.update_facing_angle(best_pos)
 
-        self.update_gradient(-self.value)
+        self.update_gradient(-(self.value + self.angry_value))
 
         self.current_pos = best_pos
         self.block_point(self.current_pos)
-        self.value = 10
-        self.update_gradient(self.value)
-
+        self.value = self.value_threshold
+        self.update_gradient(self.value + self.angry_value)
 
         return 0
 

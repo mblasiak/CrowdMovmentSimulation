@@ -46,7 +46,7 @@ def gradient_from_direction_map(direction_map_txt: str):
 
                 position = next_position
 
-            # Loop backward and fill gradient map with correct distance
+            # Loop again and fill gradient map with correct distance
             gradient_map[y][x] = distance
             # Again get current position
             position = direction_map[y][x]
