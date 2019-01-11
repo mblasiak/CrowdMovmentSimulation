@@ -26,8 +26,12 @@ class Agent:
 
         self.release_space()
 
-    def update_facing_angle(self):
-        self.facing_angle = self.direction_map.get_angle(self.current_pos)
+    def update_facing_angle(self, nex_move):
+
+        if nex_move == self.current_pos:
+            self.facing_angle = self.direction_map.get_angle(self.current_pos)
+        else:
+            self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, nex_move)
 
     def get_available_moves(self):
         available_points = []
@@ -103,7 +107,7 @@ class Agent:
 
         if self.finished_reached(best_pos):
             return 1
-        self.update_facing_angle()
+        self.update_facing_angle(best_pos)
         self.current_pos = best_pos
         self.release_space()
 
