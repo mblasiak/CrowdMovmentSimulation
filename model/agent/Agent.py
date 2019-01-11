@@ -26,22 +26,27 @@ class Agent:
 
         self.release_space()
 
-    def update_facing_angle(self, new_pos):
+    def update_facing_angle(self):
         self.facing_angle = self.direction_map.get_angle(self.current_pos)
 
     def get_available_moves(self):
         available_points = []
         (a_y, a_x) = self.current_pos
 
-        for x in range(a_x - self.max_step, a_x + self.max_step):
-            for y in range(a_y - self.max_step, a_y + self.max_step):
+        for x in range(a_x - self.max_step, a_x + self.max_step + 1):
+            for y in range(a_y - self.max_step, a_y + self.max_step + 1):
 
                 if y >= len(self.collision_map) or x >= len(self.collision_map[y]):
                     continue
                 if self.collision_map[y][x] == 0:
                     distance = nav.get_distance_beteween_points(self.current_pos, (y, x))
                     angle = nav.get_angle_of_direction_between_points(self.current_pos, (y, x))
-                    if distance <= self.max_step and abs(angle - self.facing_angle) <= self.forward_move_angle / 2:
+                    angle_diff = abs(angle - self.facing_angle)
+
+                    if angle_diff > np.pi:
+                        angle_diff = abs(angle_diff - np.pi)
+
+                    if distance <= self.max_step and angle_diff <= self.forward_move_angle / 2:
                         available_points.append((y, x))
 
         return available_points
@@ -50,14 +55,8 @@ class Agent:
 
         if self.direction_map.direction_map[pos[0]][pos[1]] == Env.EXIT:
             return 256
-        move_angle = nav.get_angle_of_direction_between_points(self.current_pos, pos)
-        move_step_length = nav.get_distance_beteween_points(self.current_pos, pos)
 
-        desired_angle = self.direction_map.get_angle(self.current_pos)
-        desired_step = self.direction_map.get_step_size(self.current_pos)
-
-        price = (move_step_length % desired_step) / desired_step * self.speed_keeping_preference \
-                + (2 * np.pi - (desired_angle - move_angle)) / (2 * np.pi) * self.direction_keeping_preference
+        price = 1/(nav.get_distance_beteween_points(self.direction_map.get_next_position(self.current_pos),pos))
         return price
 
     def get_best_move(self, moves):
@@ -104,7 +103,7 @@ class Agent:
 
         if self.finished_reached(best_pos):
             return 1
-        self.update_facing_angle(best_pos)
+        self.update_facing_angle()
         self.current_pos = best_pos
         self.release_space()
 
