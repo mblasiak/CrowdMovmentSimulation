@@ -4,14 +4,13 @@ from model.agent.Agent import ExitReached
 
 class AgentManager:
     def __init__(self, initial_tile_size: [float, float], client_width: int, client_height: int, map_offset: int,
-                 direction_map, exit, maze, direct):
+                 exit, maze, direct):
         self.agent_list = list()
         self.tile_size = initial_tile_size
         self.agent_radius = (initial_tile_size[1] - initial_tile_size[1] / 5) / 2
         self.width = client_width
         self.height = client_height
         self.offset = map_offset
-        self.direction_map = direction_map
         self.exit_points = exit
         self.maze = maze
         self.direct = direct
@@ -33,7 +32,7 @@ class AgentManager:
         for agent in self.agent_list:
             agent.draw(self.agent_radius)
 
-    def add_new(self, position: [int, int], angle: float, color: [float, float, float]):
+    def add_new(self, position: [int, int], angle: float, color: [float, float, float], which_map):
 
         correct_pos = [
             0 + self.offset + 1 + (position[1] * self.tile_size[0]) + (self.tile_size[0] / 2),
@@ -41,7 +40,7 @@ class AgentManager:
         ]
 
         if self.maze[position[0]][position[1]] == 0:
-            self.agent_list.append(AgentGfx(correct_pos, position, angle, color, self.maze, self.direct))
+            self.agent_list.append(AgentGfx(correct_pos, position, angle, color, self.maze, self.direct, which_map))
         else:
             print('Agent can not be adde on this pos')
 

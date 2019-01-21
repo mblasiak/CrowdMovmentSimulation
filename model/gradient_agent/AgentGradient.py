@@ -2,6 +2,7 @@ from copy import deepcopy
 from random import randint
 
 import model.navigator.navigator as nav
+from model.agent.Agent import ExitReached
 from model.environment.environment_enum import Env
 
 
@@ -23,11 +24,13 @@ class Agent:
         self.value_threshold = 10
         self.value = self.value_threshold
 
-        self.gradient_space_size = 5
+        self.gradient_space_size = 4
 
         self.update_gradient(self.value)
 
         self.id = randint(0, 1000)
+
+        self.anger = 0
 
     def update_facing_angle(self, new_pos):
         self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, new_pos)
@@ -131,7 +134,7 @@ class Agent:
 
         if best_pos == Env.EXIT or self.direction_map[best_pos[0]][best_pos[1]] < 65:
             self.update_gradient(-self.value)
-            return 1
+            raise ExitReached
 
         self.update_facing_angle(best_pos)
 
@@ -143,4 +146,5 @@ class Agent:
         self.update_gradient(self.value)
 
         return 0
+
 
