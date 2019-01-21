@@ -3,14 +3,13 @@ from gfx.AgentGfx import AgentGfx
 
 class AgentManager:
     def __init__(self, initial_tile_size: [float, float], client_width: int, client_height: int, map_offset: int,
-                 direction_map, exit, maze, direct):
+                 exit, maze, direct):
         self.agent_list = list()
         self.tile_size = initial_tile_size
         self.agent_radius = (initial_tile_size[1] - initial_tile_size[1] / 5) / 2
         self.width = client_width
         self.height = client_height
         self.offset = map_offset
-        self.direction_map = direction_map
         self.exit_points = exit
         self.maze = maze
         self.direct = direct
@@ -32,7 +31,7 @@ class AgentManager:
         for agent in self.agent_list:
             agent.draw(self.agent_radius)
 
-    def add_new(self, position: [int, int], angle: float, color: [float, float, float]):
+    def add_new(self, position: [int, int], angle: float, color: [float, float, float], which_map):
         for agent in self.agent_list:
             if agent.map_position == position:
                 print("Nie mozna dodac agenta na tej pozycji!")
@@ -45,7 +44,7 @@ class AgentManager:
 
         # dir_x, dir_y = self.direction_map[position[0]][position[1]]
 
-        self.agent_list.append(AgentGfx(correct_pos, position, angle, color, self.maze, self.direct))
+        self.agent_list.append(AgentGfx(correct_pos, position, angle, color, self.maze, self.direct, which_map))
 
     def step(self):
         for agent in self.agent_list:

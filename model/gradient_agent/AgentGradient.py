@@ -8,17 +8,17 @@ from model.environment.environment_enum import Env
 class Agent:
     id = 0
 
-    def __init__(self, start_position: (int, int), end_position: [(int, int)], gradient_map,
-                 collision_map: [[(int, int)]], bound_size=2):
+    def __init__(self, start_position: (int, int), end_position: [(int, int)], gradient_maps,
+                 collision_map: [[(int, int)]], which_gradient_map=0, bound_size=2):
         self.start = start_position
         self.end = end_position
         self.current_pos = self.start
         self.front_collision_size = bound_size
-        self.direction_map = gradient_map
+        self.direction_map = gradient_maps[which_gradient_map]
         self.collision_map = collision_map
         self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, end_position[0])
 
-        # self.test_colision_map = deepcopy(self.collision_map)
+        self.all_gradients = gradient_maps
 
         self.value_threshold = 10
         self.value = self.value_threshold
@@ -97,8 +97,8 @@ class Agent:
 
                 # If we this is current spot we double value here
                 if local_y == self.current_pos[0] and local_x == self.current_pos[1]:
-                    self.direction_map[local_y][local_x] += tmp_value*2
-                    #self.test_colision_map[local_y][local_x] += tmp_value*2
+                    for i in range(0, len(self.all_gradients)):
+                        self.all_gradients[i][local_y][local_x] += tmp_value*2
                     continue
 
                 # If we out of range we skip
@@ -112,36 +112,24 @@ class Agent:
                     continue
 
                 # Normal situation
-                self.direction_map[local_y][local_x] += tmp_value
-
-                #self.test_colision_map[local_y][local_x] += tmp_value
-
-        # print(f'nowe: {self.id}')
-        # for y in range(self.current_pos[0]-3, self.current_pos[0]+4):
-        #     s = ""
-        #     for x in range(self.current_pos[1]-3, self.current_pos[1]+4):
-        #         if y >= len(self.collision_map) or x >= len(self.collision_map[0]) or \
-        #                 y <= 0 or x <= 0:
-        #             continue
-        #         s += str(self.direction_map[y][x]) + ' '
-        #     print(s)
+                for i in range(0, len(self.all_gradients)):
+                    self.all_gradients[i][local_y][local_x] += tmp_value * 2
 
     def move(self):
 
         available_positions = self.get_available_moves()
-        #print(f'{self.id}: {available_positions}')
 
         best_pos = self.get_best_move(available_positions)
 
         if best_pos is None:
-            print("zablokowal sie glupol")
+            print("agnet blocked")
             # self.value += self.value
             # self.update_gradient(self.value)
             return 0
 
         self.unblock_point(self.current_pos)
 
-        if best_pos == Env.EXIT or self.direction_map[best_pos[0]][best_pos[1]] < 60:
+        if best_pos == Env.EXIT or self.direction_map[best_pos[0]][best_pos[1]] < 65:
             self.update_gradient(-self.value)
             return 1
 
@@ -156,10 +144,3 @@ class Agent:
 
         return 0
 
-# gradient_map = gradient_from_direction_map("C:\\Users\\piotr\\Desktop\\CrowdSim\\resources/ready/directios100x100yx.txt")
-#
-# maze = load_map_from_file("C:\\Users\\piotr\\Desktop\\CrowdSim\\resources\\ready\\dobry_maze100na100.txt")
-#
-# agent = Agent((4, 4), list(zip(range(40, 60), [99] * 20)), gradient_map, maze)
-#
-# print(agent.get_available_moves())
