@@ -6,7 +6,6 @@ from model.direction_map.DirectionMap import DirectionMap
 from model.environment.line import Point
 from gfx.AgentMenager import AgentManager
 from resources.handling.reading import load_direction_from_file, load_map_from_file
-from model.gradient.gradient_map import gradient_from_direction_map
 
 from random import randint
 
@@ -23,16 +22,15 @@ if not window:
 
 camera_position = [0.5, 0.5, 0]
 
-maze = load_map_from_file("resources/ready/galeria_krakowska_maze100x100.txt")
+maze = load_map_from_file("resources/ready/dobry_maze100na100.txt")
 
 exit_points = []
 for i in range(40, 60):
     exit_points.append(Point(99, i))
 
 # directions = direction_map(maze, exit_points, 1)
-directions = gradient_from_direction_map("C:\\Users\\piotr\\Desktop\\CrowdSim\\resources\\ready\\GK_directionmap_four_100x100.txt")
-
-direct = directions
+directions = load_direction_from_file("resources/ready/directios100x100yx.txt")
+direct = DirectionMap(directions)
 
 free_color = [25, 25, 25]
 collision_color = [128, 0, 0]
@@ -45,7 +43,7 @@ offset = 20
 # tile size
 t_s = [(w_prev - 2 * (offset + 1)) / len(maze[0]), (h_prev - 2 * (offset + 1)) / len(maze)]
 
-agents = AgentManager(t_s, w_prev, h_prev, offset, directions, exit_points, maze, direct)
+agents = AgentManager(t_s, w_prev, h_prev, offset, directions, exit_points, maze, [direct])
 agents.add_new([1, 1], random.randint(0, 360), [.0, .0, .6])
 agents.add_new([15, 5], random.randint(0, 360), [.0, .0, .6])
 agents.add_new([90, 70], random.randint(0, 360), [.0, .0, .6])
@@ -184,7 +182,7 @@ while not glfw.window_should_close(window):
 
     glfw.swap_buffers(window)
 
-    pos = [randint(50, 99), 98]
+    pos = [randint(1, 99), 1]
     agents.add_new(pos, 33.0, [.0, .0, .9])
 
 glfw.terminate()
