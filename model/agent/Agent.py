@@ -10,7 +10,7 @@ from model.environment.environment_enum import Env
 
 class Agent:
     def __init__(self, start_position: (int, int), end_position: [(int, int)], directions_map: [DirectionMap],
-                 collision_map: [[(int, int)]], bound_size=2, max_step=1,mode=0 ):
+                 collision_map: [[(int, int)]],mode=0, bound_size=2, max_step=1 ):
 
         self.start = start_position
         self.end = end_position
