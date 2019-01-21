@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 import model.navigator.navigator as nav
@@ -19,7 +21,7 @@ class Agent:
         self.collision_map = collision_map
         self.facing_angle = directions_map.get_angle(self.current_pos)
 
-        self.forward_move_angle = np.pi * (10 / 10)
+        self.forward_move_angle = np.pi * (9 / 10)
         self.minimal_move_price = 0.05
         self.anger = 0;
         self.block_space()
@@ -46,9 +48,8 @@ class Agent:
                     desired_angle = self.direction_map.get_angle(self.current_pos)
                     angle_diff = abs(angle - desired_angle)
 
-                    if angle_diff > np.pi:
+                    if angle_diff > 3/2*np.pi:
                         angle_diff = abs(angle_diff - np.pi)
-                    # TODO Dlaczego mogą zawrócić gdy nie maja dostępu do swojej pozycjia tym barziej żę ta pozycaj jest poza kontem
                     if distance <= self.max_step and angle_diff <= self.forward_move_angle / 2:
                         available_points.append((y, x))
 
@@ -58,7 +59,8 @@ class Agent:
         if self.direction_map.direction_map[pos[0]][pos[1]] == Env.EXIT:
             return 256
         price = (nav.get_distance_beteween_points(self.direction_map.get_next_position(self.current_pos), pos))
-        return price
+        price=price*nav.get_distance_beteween_points(pos,self.end[0])
+        return np.floor(price)
 
     def get_best_move(self, moves):
         desired_move = self.direction_map.get_next_position(self.current_pos)
@@ -70,14 +72,19 @@ class Agent:
             return desired_move
 
         if len(moves) == 0:
+            print('stoje')
             return self.current_pos
 
-        maxi = min(moves, key=lambda z: self.move_price(z))
-        if self.move_price(maxi) >= self.minimal_move_price:
-            return maxi
-
-        else:
-            return self.current_pos
+        prices=list(map(lambda z: self.move_price(z),moves))
+        mini = min(moves, key=lambda z: self.move_price(z))
+        if mini==self.current_pos and len(moves)>1:
+            print('Najlepiej to stac')
+            print(self.current_pos)
+            print(prices)
+            print(moves)
+            print(desired_move)
+            print('KOniec')
+        return mini
 
     def update_collisions(self, value):
         current_y, current_x = self.current_pos
@@ -102,6 +109,8 @@ class Agent:
     def move(self):
         self.release_spce()
         available_positions = self.get_possible_moves()
+
+        random.shuffle(available_positions)
 
         best_pos = self.get_best_move(available_positions)
 
