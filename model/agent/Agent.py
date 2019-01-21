@@ -1,3 +1,5 @@
+import random
+
 import numpy as np
 
 import model.navigator.navigator as nav
@@ -19,49 +21,48 @@ class Agent:
         self.collision_map = collision_map
         self.facing_angle = directions_map.get_angle(self.current_pos)
 
-        self.forward_move_angle = np.pi * (8 / 10)
-        self.speed_keeping_preference = 0.6
-        self.direction_keeping_preference = 1 - self.speed_keeping_preference
+        self.forward_move_angle = np.pi * (9 / 10)
         self.minimal_move_price = 0.05
+        self.anger = 0;
+        self.block_space()
 
-        self.realese_space()
+    def update_facing_angle(self, nex_move):
+        if nex_move == self.current_pos:
+            self.facing_angle = self.direction_map.get_angle(self.current_pos)
+        else:
+            self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, nex_move)
 
-    def update_facing_angle(self, new_pos):
-        self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, new_pos)
-
-    def get_available_moves(self):
+    def get_possible_moves(self):
         available_points = []
         (a_y, a_x) = self.current_pos
 
-        for x in range(a_x - self.max_step, a_x + self.max_step):
-            for y in range(a_y - self.max_step, a_y + self.max_step):
+        for x in range(a_x - self.max_step, a_x + self.max_step + 1):
+            for y in range(a_y - self.max_step, a_y + self.max_step + 1):
 
                 if y >= len(self.collision_map) or x >= len(self.collision_map[y]):
                     continue
                 if self.collision_map[y][x] == 0:
+
                     distance = nav.get_distance_beteween_points(self.current_pos, (y, x))
                     angle = nav.get_angle_of_direction_between_points(self.current_pos, (y, x))
-                    if distance <= self.max_step and abs(angle - self.facing_angle) <= self.forward_move_angle / 2:
+                    desired_angle = self.direction_map.get_angle(self.current_pos)
+                    angle_diff = abs(angle - desired_angle)
+
+                    if angle_diff > 3/2*np.pi:
+                        angle_diff = abs(angle_diff - np.pi)
+                    if distance <= self.max_step and angle_diff <= self.forward_move_angle / 2:
                         available_points.append((y, x))
 
         return available_points
 
-    def get_move_price(self, pos: (int, int)) -> float:
-
+    def move_price(self, pos: (int, int)) -> float:
         if self.direction_map.direction_map[pos[0]][pos[1]] == Env.EXIT:
             return 256
-        move_angle = nav.get_angle_of_direction_between_points(self.current_pos, pos)
-        move_step_length = nav.get_distance_beteween_points(self.current_pos, pos)
-
-        desired_angle = self.direction_map.get_angle(self.current_pos)
-        desired_step = self.direction_map.get_step_size(self.current_pos)
-
-        price = (move_step_length % desired_step) / desired_step * self.speed_keeping_preference \
-                + (2 * np.pi - (desired_angle - move_angle)) / (2 * np.pi) * self.direction_keeping_preference
-        return price
+        price = (nav.get_distance_beteween_points(self.direction_map.get_next_position(self.current_pos), pos))
+        price=price*nav.get_distance_beteween_points(pos,self.end[0])
+        return np.floor(price)
 
     def get_best_move(self, moves):
-
         desired_move = self.direction_map.get_next_position(self.current_pos)
 
         if isinstance(desired_move, Env):
@@ -71,17 +72,19 @@ class Agent:
             return desired_move
 
         if len(moves) == 0:
-            print('Had no ther moves')
+            print('stoje')
             return self.current_pos
 
-        maxi = max(moves, key=lambda z: self.get_move_price(z))
-        if self.get_move_price(maxi) >= self.minimal_move_price:
-            print('Used alternative move')
-            return maxi
-
-        else:
-            print('Used current pos')
-            return self.current_pos
+        prices=list(map(lambda z: self.move_price(z),moves))
+        mini = min(moves, key=lambda z: self.move_price(z))
+        if mini==self.current_pos and len(moves)>1:
+            print('Najlepiej to stac')
+            print(self.current_pos)
+            print(prices)
+            print(moves)
+            print(desired_move)
+            print('KOniec')
+        return mini
 
     def update_collisions(self, value):
         current_y, current_x = self.current_pos
@@ -90,28 +93,40 @@ class Agent:
             for y in range(current_y - collision, current_y + collision + 1):
                 mark_location((y, x), self.collision_map, value)
 
-    def block_space(self):
+    def release_spce(self):
         self.update_collisions(-1)
 
-    def realese_space(self):
+    def block_space(self):
         self.update_collisions(1)
 
-    def move(self):
-        self.block_space()
-        available_positions = self.get_available_moves()
-
-        best_pos = self.get_best_move(available_positions)
-
-        if self.check_if_finish_will_be_reached(best_pos):
-            return 1
-        self.update_facing_angle(best_pos)
-        self.current_pos = best_pos
-        self.realese_space()
-
-        return 0
-
-    def check_if_finish_will_be_reached(self, pos):
+    def finished_reached(self, pos):
+        pos = self.direction_map.direction_map[pos[0]][pos[1]]
         if isinstance(pos, Env) and pos == Env.EXIT:
             return True
         else:
             return False
+
+    def move(self):
+        self.release_spce()
+        available_positions = self.get_possible_moves()
+
+        random.shuffle(available_positions)
+
+        best_pos = self.get_best_move(available_positions)
+
+        if self.finished_reached(best_pos):
+            raise ExitReached
+        if best_pos == self.current_pos:
+            self.anger += 1
+        else:
+            self.anger = 0
+        self.update_facing_angle(best_pos)
+        self.current_pos = best_pos
+        self.block_space()
+
+        return self.anger
+
+
+class ExitReached(Exception):
+    def __init__(self):
+        super().__init__()
