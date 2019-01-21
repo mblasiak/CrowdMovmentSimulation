@@ -1,6 +1,6 @@
 from OpenGL.GL import *
 from math import *
-from model.gradient_agent.Agent import Agent
+from model.gradient_agent.AgentGradient import Agent
 
 
 class AgentGfx:

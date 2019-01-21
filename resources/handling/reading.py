@@ -18,7 +18,7 @@ def load_direction_from_file(directions_filename: str):
     direction = []
     for line in content:
         splitted = re.split("\) \(|\) |\(| |, |\n", line)
-        splitted = splitted[1::]
+        splitted = splitted[0::]
         splitted = splitted[:-2 or None]
         points = []
         pos_x = -1

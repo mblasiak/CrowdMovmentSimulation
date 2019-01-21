@@ -1,13 +1,13 @@
+from copy import deepcopy
 from random import randint
 
-from model.direction_map import DirectionMap
 import model.navigator.navigator as nav
 from model.environment.environment_enum import Env
-from model.gradient.gradient_map import gradient_from_direction_map
-from resources.handling.reading import load_map_from_file
 
 
 class Agent:
+    id = 0
+
     def __init__(self, start_position: (int, int), end_position: [(int, int)], gradient_map,
                  collision_map: [[(int, int)]], bound_size=2):
         self.start = start_position
@@ -18,13 +18,16 @@ class Agent:
         self.collision_map = collision_map
         self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, end_position[0])
 
-        self.angry_value = 0
-        self.angry_value_threshold = 2
+        # self.test_colision_map = deepcopy(self.collision_map)
 
         self.value_threshold = 10
         self.value = self.value_threshold
 
-        self.update_gradient(self.value + self.angry_value)
+        self.gradient_space_size = 5
+
+        self.update_gradient(self.value)
+
+        self.id = randint(0, 1000)
 
     def update_facing_angle(self, new_pos):
         self.facing_angle = nav.get_angle_of_direction_between_points(self.current_pos, new_pos)
@@ -47,7 +50,7 @@ class Agent:
                 if self.direction_map[y][x] == Env.OBSTACLE or self.direction_map[y][x] == Env.EXIT:
                     continue
 
-                # If spot is free and if spot has lower gradient value then the current_pos we add it
+                # if spot has lower gradient value then the current_pos we add it
                 if self.direction_map[y][x] < self.direction_map[self.current_pos[0]][self.current_pos[1]]:
                     # we create list of ( gradient_value, (y, x) )
                     available_spots.append((self.direction_map[y][x], (y, x)))
@@ -64,38 +67,9 @@ class Agent:
         for i in range(0, len(available_spots)):
             a_y, a_x = available_spots[i][1]
             if self.collision_map[a_y][a_x] == 0:
-                if i == 0:
-                    self.angry_value = 0
                 return available_spots[i][1]
-            else:
-                self.angry_value += self.angry_value_threshold
 
         return None
-
-        # TODO to narzie nie uzywane ale moze sie przyda
-        print("tutaj nie powininismy dojsc")
-        lowest_gradient_value = available_spots[0][0]
-
-        lowest_gradient_spots = []
-        rest_spots = []
-
-        for spot in available_spots:
-            if self.collision_map[spot[1][0]][spot[1][1]] == 0:
-                if spot[0] == lowest_gradient_value:
-                    lowest_gradient_spots.append(spot[1])
-                else:
-                    rest_spots.append(spot[1])
-
-        if len(lowest_gradient_spots) != 0:
-            for spot in lowest_gradient_spots:
-                if spot[0] == self.current_pos[0] or spot[1] == self.current_pos[1]:
-                    return spot
-            random = randint(0, len(lowest_gradient_spots)-1)
-            return lowest_gradient_spots[random]
-
-        elif len(rest_spots) != 0:
-            random = randint(0, len(rest_spots)-1)
-            return rest_spots[random]
 
     def block_point(self, position):
         self.collision_map[position[0]][position[1]] = 1
@@ -104,57 +78,84 @@ class Agent:
         self.collision_map[position[0]][position[1]] = 0
 
     def update_gradient(self, value):
-        for y in range(self.current_pos[0]-2, self.current_pos[0]+3):
-            for x in range(self.current_pos[1]-2, self.current_pos[1]+3):
+        for y in range(-self.gradient_space_size, self.gradient_space_size + 1):
+            for x in range(-self.gradient_space_size, self.gradient_space_size + 1):
+
+                local_y = self.current_pos[0] + y
+                local_x = self.current_pos[1] + x
+
+                if y >= 5 or y <= -5 or x >= 5 or x <= -5:
+                    tmp_value = int(value/5)
+                elif y == 4 or y == -4 or x == 4 or x == -4:
+                    tmp_value = int(value/4)
+                elif y == 3 or y == -3 or x == 3 or x == -3:
+                    tmp_value = int(value/3)
+                elif y == 2 or y == -2 or x == 2 or x == -2:
+                    tmp_value = int(value/2)
+                else:
+                    tmp_value = value
 
                 # If we this is current spot we double value here
-                if y == self.current_pos[0] and x == self.current_pos[1]:
-                    self.direction_map[y][x] += 2*value
+                if local_y == self.current_pos[0] and local_x == self.current_pos[1]:
+                    self.direction_map[local_y][local_x] += tmp_value*2
+                    #self.test_colision_map[local_y][local_x] += tmp_value*2
                     continue
 
                 # If we out of range we skip
-                if y >= len(self.collision_map) or x >= len(self.collision_map[0]) or \
-                        y <= 0 or x <= 0:
+                if local_y >= len(self.collision_map) or local_x >= len(self.collision_map[0]) or \
+                        local_y <= 0 or local_x <= 0:
                     continue
 
                 # If spot is obstacle or exit we skip
-                if self.direction_map[y][x] == Env.EXIT or self.direction_map[y][x] == Env.OBSTACLE:
+                if self.direction_map[local_y][local_x] == Env.EXIT or \
+                        self.direction_map[local_y][local_x] == Env.OBSTACLE:
                     continue
 
                 # Normal situation
-                self.direction_map[y][x] += value
+                self.direction_map[local_y][local_x] += tmp_value
+
+                #self.test_colision_map[local_y][local_x] += tmp_value
+
+        # print(f'nowe: {self.id}')
+        # for y in range(self.current_pos[0]-3, self.current_pos[0]+4):
+        #     s = ""
+        #     for x in range(self.current_pos[1]-3, self.current_pos[1]+4):
+        #         if y >= len(self.collision_map) or x >= len(self.collision_map[0]) or \
+        #                 y <= 0 or x <= 0:
+        #             continue
+        #         s += str(self.direction_map[y][x]) + ' '
+        #     print(s)
 
     def move(self):
 
-        self.unblock_point(self.current_pos)
         available_positions = self.get_available_moves()
+        #print(f'{self.id}: {available_positions}')
 
         best_pos = self.get_best_move(available_positions)
 
         if best_pos is None:
-            self.block_point(self.current_pos)
-            self.value += self.value
-            self.update_gradient(self.value + self.angry_value)
+            print("zablokowal sie glupol")
+            # self.value += self.value
+            # self.update_gradient(self.value)
             return 0
 
-        if best_pos == Env.EXIT or self.direction_map[best_pos[0]][best_pos[1]] == 0 or best_pos[1] > 96:
-            self.update_gradient(-(self.value + self.angry_value))
+        self.unblock_point(self.current_pos)
+
+        if best_pos == Env.EXIT or self.direction_map[best_pos[0]][best_pos[1]] < 60:
+            self.update_gradient(-self.value)
             return 1
 
         self.update_facing_angle(best_pos)
 
-        self.update_gradient(-(self.value + self.angry_value))
+        self.update_gradient(-self.value)
 
         self.current_pos = best_pos
         self.block_point(self.current_pos)
-        self.value = self.value_threshold
-        self.update_gradient(self.value + self.angry_value)
+
+        self.update_gradient(self.value)
 
         return 0
 
-
-#
-#
 # gradient_map = gradient_from_direction_map("C:\\Users\\piotr\\Desktop\\CrowdSim\\resources/ready/directios100x100yx.txt")
 #
 # maze = load_map_from_file("C:\\Users\\piotr\\Desktop\\CrowdSim\\resources\\ready\\dobry_maze100na100.txt")

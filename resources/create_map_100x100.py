@@ -1,70 +1,101 @@
 from model.environment.environment import direction_map
 from model.environment.line import Point
 from resources.handling.generating import create_txt_form_direction_map
+from resources.handling.reading import load_map_from_file
+
 n = 100
 maze = [[0 for j in range(0, n)] for i in range(0, n)]
 
-for i in range(0, 40):
-    maze[i][96] = 1
-    maze[i][97] = 1
-    maze[i][98] = 1
-    maze[i][99] = 1
+"""generowannie glareia krakowska maze"""
+# for x in range(55, 100):
+#     for y in range(0, 34):
+#         maze[y][x] = 1
+#
+# for y in range(51, 55):
+#     for x in range(0, 30):
+#         maze[x][y] = 1
+# """next"""
+#
+# for i in range(34,40):
+#     for j in range(55,57):
+#         maze[i][j] = 1
+#
+# for i in range(46,52):
+#     for j in range(55,57):
+#         maze[i][j] = 1
+#
+# for i in range(58, 64):
+#     for j in range(55, 57):
+#         maze[i][j] = 1
+#
+# for i in range(70, 76):
+#     for j in range(55, 57):
+#         maze[i][j] = 1
+#
+# for i in range(82, 88):
+#     for j in range(55, 57):
+#         maze[i][j] = 1
+#
+# for i in range(94, 100):
+#     for j in range(55, 57):
+#         maze[i][j] = 1
+#
+# """next"""
+# for i in range(40,46):
+#     for j in range(62,64):
+#         maze[i][j] = 1
+#
+# for i in range(52,58):
+#     for j in range(62,64):
+#         maze[i][j] = 1
+#
+# for i in range(64, 76):
+#     for j in range(62, 64):
+#         maze[i][j] = 1
+#
+# for i in range(82, 88):
+#     for j in range(62, 64):
+#         maze[i][j] = 1
+#
+# for i in range(94, 100):
+#     for j in range(62, 64):
+#         maze[i][j] = 1
+#
+# """next"""
+# for i in range(48, 53):
+#     for j in range(70, 76):
+#         maze[j][i] = 1
+#
+# """next"""
+# for i in range(94, 100):
+#     for j in range(0,24):
+#         maze[i][j] = 1
+#
+# """next"""
+# for y in range(30, 64):
+#     for x in range(7,21):
+#         maze[y][x] = 1
+#
+# for y in range(0,11):
+#     for x in range(7,21):
+#         maze[y][x] = 1
+#
+# """next"""
+# for i in range(66, 74):
+#     for j in range(72, 90):
+#         maze[i][j] = 1
 
-for i in range(60, 100):
-    maze[i][96] = 1
-    maze[i][97] = 1
-    maze[i][98] = 1
-    maze[i][99] = 1
 
-for i in range(0, 11):
-    maze[i][50] = 1
-    maze[i][51] = 1
-    maze[i][52] = 1
-    maze[i][47] = 1
-    maze[i][48] = 1
-    maze[i][49] = 1
 
-for i in range(22, 33):
-    maze[i][50] = 1
-    maze[i][51] = 1
-    maze[i][52] = 1
-    maze[i][47] = 1
-    maze[i][48] = 1
-    maze[i][49] = 1
 
-for i in range(44, 55):
-    maze[i][50] = 1
-    maze[i][51] = 1
-    maze[i][52] = 1
-    maze[i][47] = 1
-    maze[i][48] = 1
-    maze[i][49] = 1
+exits = [Point(99, 90)]
 
-for i in range(66, 77):
-    maze[i][50] = 1
-    maze[i][51] = 1
-    maze[i][52] = 1
-    maze[i][47] = 1
-    maze[i][48] = 1
-    maze[i][49] = 1
+mazeGK = load_map_from_file("ready/galeria_krakowska_maze100x100.txt")
 
-for i in range(88, 100):
-    maze[i][50] = 1
-    maze[i][51] = 1
-    maze[i][52] = 1
-    maze[i][47] = 1
-    maze[i][48] = 1
-    maze[i][49] = 1
-
-exits = []
-for i in range(40, 60):
-    exits.append(Point(99, i))
-
-exits = [Point(99, 50)]
 
 print('Generating directions')
-directions = direction_map(maze, exits, 1)
+directions = direction_map(mazeGK, exits, 1)
 print('Directions generated')
 print('Tralsating directions to txt')
-create_txt_form_direction_map("ready/directios100x100yxWith1Exit.txt", directions)
+create_txt_form_direction_map("ready/GK_directionmap_four_100x100.txt", directions)
 print('Map has been saved')
