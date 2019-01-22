@@ -29,6 +29,7 @@ def gradient_from_direction_map(direction_map_txt: str):
             # Initialize distance variable for distance from the start point
             distance = 0
 
+
             # Loop till EXIT found so distance is full
             while position != Env.EXIT:
 
@@ -46,7 +47,7 @@ def gradient_from_direction_map(direction_map_txt: str):
 
                 position = next_position
 
-            # Loop backward and fill gradient map with correct distance
+            # Loop again and fill gradient map with correct distance
             gradient_map[y][x] = distance
             # Again get current position
             position = direction_map[y][x]
@@ -68,6 +69,3 @@ def gradient_from_direction_map(direction_map_txt: str):
 
     return gradient_map
 
-
-for ele in gradient_from_direction_map("C:\\Users\\piotr\\Desktop\\CrowdSim\\resources/ready/directios100x100yx.txt"):
-    print(ele)
