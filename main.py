@@ -29,8 +29,14 @@ for i in range(40, 60):
     exit_points.append(Point(99, i))
 
 # directions = direction_map(maze, exit_points, 1)
-directions = load_direction_from_file("resources/ready/GK_directionmap_three_100x100.txt")
-direct = DirectionMap(directions)
+directions_1 = load_direction_from_file("resources/ready/GK_directionmap_one_100x100.txt")
+directions_2 = load_direction_from_file("resources/ready/GK_directionmap_two_100x100.txt")
+directions_3 = load_direction_from_file("resources/ready/GK_directionmap_three_100x100.txt")
+directions_4 = load_direction_from_file("resources/ready/GK_directionmap_four_100x100.txt")
+
+
+direct = [DirectionMap(directions_1),DirectionMap(directions_2),DirectionMap(directions_3),DirectionMap(directions_4)]
+
 
 free_color = [25, 25, 25]
 collision_color = [128, 0, 0]
@@ -43,7 +49,7 @@ offset = 20
 # tile size
 t_s = [(w_prev - 2 * (offset + 1)) / len(maze[0]), (h_prev - 2 * (offset + 1)) / len(maze)]
 
-agents = AgentManager(t_s, w_prev, h_prev, offset, exit_points, maze, [direct])
+agents = AgentManager(t_s, w_prev, h_prev, offset, exit_points, maze, direct)
 agents.add_new([1, 1], random.randint(0, 360), [.0, .0, .6], 0)
 agents.add_new([15, 5], random.randint(0, 360), [.0, .0, .6], 0)
 agents.add_new([90, 70], random.randint(0, 360), [.0, .0, .6], 0)
@@ -186,10 +192,10 @@ while not glfw.window_should_close(window):
     if intensity < 40:
         pos = [randint(50, 99), 98]
         which_map = randint(0, 1)
-        agents.add_new(pos, 33.0, [.0, .0, .9], 0)
+        agents.add_new(pos, 33.0, [.0, .0, .9], which_map)
 
         pos = [randint(2, 90), 2]
         which_map = randint(2, 3)
-        agents.add_new(pos, 33.0, [.0, .0, .9], 0)
+        agents.add_new(pos, 33.0, [.0, .0, .9], which_map)
 
 glfw.terminate()
