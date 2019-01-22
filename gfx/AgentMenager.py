@@ -6,14 +6,13 @@ from model.agent.Agent import ExitReached
 
 class AgentManager:
     def __init__(self, initial_tile_size: [float, float], client_width: int, client_height: int, map_offset: int,
-                 direction_map, exit, maze, direct):
+                 exit, maze, direct):
         self.agent_list = list()
         self.tile_size = initial_tile_size
         self.agent_radius = (initial_tile_size[1] - initial_tile_size[1] / 5) / 2
         self.width = client_width
         self.height = client_height
         self.offset = map_offset
-        self.direction_map = direction_map
         self.exit_points = exit
         self.maze = maze
         self.maze_for_agent=copy.deepcopy(maze)

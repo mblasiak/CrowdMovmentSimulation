@@ -10,6 +10,8 @@ from model.gradient.gradient_map import gradient_from_direction_map
 
 from random import randint
 
+
+
 if not glfw.init():
     exit(1)
 
@@ -21,6 +23,11 @@ if not window:
     glfw.terminate()
     exit(1)
 
+# global intensity
+global global_intensity
+
+global_intensity = 50
+
 camera_position = [0.5, 0.5, 0]
 
 maze = load_map_from_file("resources/ready/galeria_krakowska_maze100x100.txt")
@@ -30,10 +37,10 @@ for i in range(40, 60):
     exit_points.append(Point(99, i))
 
 # directions = direction_map(maze, exit_points, 1)
-direction1 = gradient_from_direction_map("C:\\Users\\piotr\\Desktop\\CrowdSim\\resources\\ready\\GK_directionmap_one_100x100.txt")
-direction2 = gradient_from_direction_map("C:\\Users\\piotr\\Desktop\\CrowdSim\\resources\\ready\\GK_directionmap_two_100x100.txt")
-direction3 = gradient_from_direction_map("C:\\Users\\piotr\\Desktop\\CrowdSim\\resources\\ready\\GK_directionmap_three_100x100.txt")
-direction4 = gradient_from_direction_map("C:\\Users\\piotr\\Desktop\\CrowdSim\\resources\\ready\\GK_directionmap_four_100x100.txt")
+direction1 = gradient_from_direction_map("resources\\ready\\GK_directionmap_one_100x100.txt")
+direction2 = gradient_from_direction_map("resources\\ready\\GK_directionmap_two_100x100.txt")
+direction3 = gradient_from_direction_map("resources\\ready\\GK_directionmap_three_100x100.txt")
+direction4 = gradient_from_direction_map("resources\\ready\\GK_directionmap_four_100x100.txt")
 
 direct = [direction1, direction2, direction3, direction4]
 
@@ -71,6 +78,15 @@ def mouse_button_callback(window, button, action, mods):
 
 
 def key_callback(window, key, scancode, action, mods):
+    global global_intensity
+    if key == glfw.KEY_KP_ADD and action == glfw.RELEASE:
+        global_intensity += 10
+        if global_intensity > 100:
+            global_intensity = 100
+    if key == glfw.KEY_KP_SUBTRACT and action == glfw.RELEASE:
+        global_intensity -= 10
+        if global_intensity < 0:
+            global_intensity = 0
     if key == glfw.KEY_LEFT and action == glfw.REPEAT:
         camera_position[0] -= 10
     if key == glfw.KEY_RIGHT and action == glfw.REPEAT:
@@ -102,7 +118,7 @@ while not glfw.window_should_close(window):
     # old_step_time = current_time
 
     if current_time - previous_time >= 1.0:
-        title="Crowd Simulation | " + str(frame_count) + " FPS | Number Of Agents: "+str(len(agents.agent_list)) + " |"
+        title="Crowd Simulation | " + str(frame_count) + " FPS | Number Of Agents: "+str(len(agents.agent_list)) + " |" + " intensity: " + str(global_intensity)
         glfw.set_window_title(window, title)
         frame_count = 0
         previous_time = current_time
@@ -188,7 +204,7 @@ while not glfw.window_should_close(window):
     glfw.swap_buffers(window)
 
     intensity = randint(0,100)
-    if intensity < 40:
+    if intensity < global_intensity:
         pos = [randint(50, 99), 98]
         which_map = randint(0, 1)
         agents.add_new(pos, 33.0, [.0, .0, .9], which_map)

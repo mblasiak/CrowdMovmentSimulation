@@ -43,7 +43,7 @@ offset = 20
 # tile size
 t_s = [(w_prev - 2 * (offset + 1)) / len(maze[0]), (h_prev - 2 * (offset + 1)) / len(maze)]
 
-agents = AgentManager(t_s, w_prev, h_prev, offset, directions, exit_points, maze, [direct])
+agents = AgentManager(t_s, w_prev, h_prev, offset, exit_points, maze, [direct])
 agents.add_new([1, 1], random.randint(0, 360), [.0, .0, .6], 0)
 agents.add_new([15, 5], random.randint(0, 360), [.0, .0, .6], 0)
 agents.add_new([90, 70], random.randint(0, 360), [.0, .0, .6], 0)
@@ -66,6 +66,8 @@ def mouse_button_callback(window, button, action, mods):
 
 
 def key_callback(window, key, scancode, action, mods):
+    if key == glfw.KEY_KP_ADD and action == glfw.RELEASE:
+        print("dupka 122222222222222222")
     if key == glfw.KEY_LEFT and action == glfw.REPEAT:
         camera_position[0] -= 10
     if key == glfw.KEY_RIGHT and action == glfw.REPEAT:
