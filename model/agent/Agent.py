@@ -23,7 +23,7 @@ class Agent:
 
         self.forward_move_angle = np.pi * (9 / 10)
         self.minimal_move_price = 0.05
-        self.anger = 0;
+        self.anger = 0
         self.block_space()
 
     def update_facing_angle(self, nex_move):

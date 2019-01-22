@@ -1,8 +1,6 @@
 from OpenGL.GL import *
 from math import *
-from model.gradient_agent.AgentGradient import Agent
-#from model.agent.Agent import Agent
-
+from model.agent.Agent import Agent
 
 class AgentGfx:
     def __init__(self, position: [float, float], map_position: [int, int], angle: float, color: [float, float, float],
@@ -27,7 +25,7 @@ class AgentGfx:
         # draw circle
 
         posx, posy = self.fx_pos
-        sides = 64
+        sides = 8
 
         # draw circle filling
         glBegin(GL_POLYGON)
@@ -49,7 +47,7 @@ class AgentGfx:
         # draw direction line
         vec = [(direction[0] - self.position[0]), (direction[1] - self.position[1])]
 
-        vec_len = sqrt(pow(vec[0], 2) + pow(vec[1], 2))/5
+        vec_len = sqrt(pow(vec[0], 2) + pow(vec[1], 2)) / 5
         vec[0] = vec[0] / vec_len * radius
         vec[1] = vec[1] / vec_len * radius
 

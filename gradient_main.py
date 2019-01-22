@@ -4,7 +4,7 @@ import random
 
 from model.direction_map.DirectionMap import DirectionMap
 from model.environment.line import Point
-from gfx.AgentMenager import AgentManager
+from gfx.AgentManager import AgentManager
 from resources.handling.reading import load_direction_from_file, load_map_from_file
 from model.gradient.gradient_map import gradient_from_direction_map
 
