@@ -1,17 +1,18 @@
 from OpenGL.GL import *
 from math import *
+#from model.gradient_agent.AgentGradient import Agent
 from model.agent.Agent import Agent
 
 
 class AgentGfx:
     def __init__(self, position: [float, float], map_position: [int, int], angle: float, color: [float, float, float],
-                 direction, maze, direct):
+                 maze, direct, which_map=0):
         self.map_position = map_position
         self.position = position
         self.angle = radians(angle)
         self.color = color
         exits = list(zip(range(40, 60), [99] * 20))
-        self.agent = Agent((map_position[0], map_position[1]), exits, direct, maze)
+        self.agent = Agent((map_position[0], map_position[1]), exits, direct, maze, which_map)
         self.fx_pos = (0, 0)
 
     def move(self):
