@@ -9,17 +9,17 @@ from model.environment.environment_enum import Env
 
 
 class Agent:
-    def __init__(self, start_position: (int, int), end_position: [(int, int)], directions_map: DirectionMap,
-                 collision_map: [[(int, int)]], bound_size=2, max_step=1, ):
+    def __init__(self, start_position: (int, int), end_position: [(int, int)], directions_map: [DirectionMap],
+                 collision_map: [[(int, int)]],mode=0, bound_size=2, max_step=1 ):
 
         self.start = start_position
         self.end = end_position
         self.current_pos = self.start
         self.max_step = max_step
         self.front_collision_size = bound_size
-        self.direction_map = directions_map
+        self.direction_map = directions_map[mode]
         self.collision_map = collision_map
-        self.facing_angle = directions_map.get_angle(self.current_pos)
+        self.facing_angle = self.direction_map.get_angle(self.current_pos)
 
         self.forward_move_angle = np.pi * (9 / 10)
         self.minimal_move_price = 0.05

@@ -6,7 +6,6 @@ from model.direction_map.DirectionMap import DirectionMap
 from model.environment.line import Point
 from gfx.AgentMenager import AgentManager
 from resources.handling.reading import load_direction_from_file, load_map_from_file
-from model.gradient.gradient_map import gradient_from_direction_map
 
 from random import randint
 
@@ -30,9 +29,8 @@ for i in range(40, 60):
     exit_points.append(Point(99, i))
 
 # directions = direction_map(maze, exit_points, 1)
-directions = gradient_from_direction_map("C:\\Users\\piotr\\Desktop\\CrowdSim\\resources\\ready\\GK_directionmap_four_100x100.txt")
-
-direct = directions
+directions = load_direction_from_file("resources/ready/GK_directionmap_three_100x100.txt")
+direct = DirectionMap(directions)
 
 free_color = [25, 25, 25]
 collision_color = [128, 0, 0]
@@ -45,10 +43,10 @@ offset = 20
 # tile size
 t_s = [(w_prev - 2 * (offset + 1)) / len(maze[0]), (h_prev - 2 * (offset + 1)) / len(maze)]
 
-agents = AgentManager(t_s, w_prev, h_prev, offset, directions, exit_points, maze, direct)
-agents.add_new([1, 1], random.randint(0, 360), [.0, .0, .6])
-agents.add_new([15, 5], random.randint(0, 360), [.0, .0, .6])
-agents.add_new([90, 70], random.randint(0, 360), [.0, .0, .6])
+agents = AgentManager(t_s, w_prev, h_prev, offset, directions, exit_points, maze, [direct])
+agents.add_new([1, 1], random.randint(0, 360), [.0, .0, .6], 0)
+agents.add_new([15, 5], random.randint(0, 360), [.0, .0, .6], 0)
+agents.add_new([90, 70], random.randint(0, 360), [.0, .0, .6], 0)
 
 
 def mouse_button_callback(window, button, action, mods):
@@ -64,7 +62,7 @@ def mouse_button_callback(window, button, action, mods):
             if t_s[0] * it < pos_x < t_s[0] * (it + 1):
                 pos[1] = it
         if pos[0] != -1 and pos[1] != -1 and maze[pos[0]][pos[1]] != 1:
-            agents.add_new(pos, 33.0, [.0, .0, .9])
+            agents.add_new(pos, 33.0, [.0, .0, .9], 0)
 
 
 def key_callback(window, key, scancode, action, mods):
@@ -184,7 +182,14 @@ while not glfw.window_should_close(window):
 
     glfw.swap_buffers(window)
 
-    pos = [randint(50, 99), 98]
-    agents.add_new(pos, 33.0, [.0, .0, .9])
+    intensity = randint(0, 100)
+    if intensity < 40:
+        pos = [randint(50, 99), 98]
+        which_map = randint(0, 1)
+        agents.add_new(pos, 33.0, [.0, .0, .9], 0)
+
+        pos = [randint(2, 90), 2]
+        which_map = randint(2, 3)
+        agents.add_new(pos, 33.0, [.0, .0, .9], 0)
 
 glfw.terminate()
