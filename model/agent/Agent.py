@@ -10,7 +10,7 @@ from model.environment.environment_enum import Env
 
 class Agent:
     def __init__(self, start_position: (int, int), end_position: [(int, int)], directions_map: [DirectionMap],
-                 collision_map: [[(int, int)]],mode=0, bound_size=2, max_step=1 ):
+                 collision_map: [[(int, int)]],mode=0, bound_size=1, max_step=3 ):
 
         self.start = start_position
         self.end = end_position
@@ -59,7 +59,7 @@ class Agent:
         if self.direction_map.direction_map[pos[0]][pos[1]] == Env.EXIT:
             return 256
         price = (nav.get_distance_beteween_points(self.direction_map.get_next_position(self.current_pos), pos))
-        price=price*nav.get_distance_beteween_points(pos,self.end[0])
+        #price=price*nav.get_distance_beteween_points(pos,self.end[0])
         return np.floor(price)
 
     def get_best_move(self, moves):
@@ -72,18 +72,9 @@ class Agent:
             return desired_move
 
         if len(moves) == 0:
-            print('stoje')
             return self.current_pos
 
-        prices=list(map(lambda z: self.move_price(z),moves))
         mini = min(moves, key=lambda z: self.move_price(z))
-        if mini==self.current_pos and len(moves)>1:
-            print('Najlepiej to stac')
-            print(self.current_pos)
-            print(prices)
-            print(moves)
-            print(desired_move)
-            print('KOniec')
         return mini
 
     def update_collisions(self, value):
