@@ -11,6 +11,11 @@ from random import randint
 if not glfw.init():
     exit(1)
 
+# global intensity
+global global_intensity
+
+global_intensity = 50
+
 window = glfw.create_window(1280, 720, "Modelowanie i Symulacja Systemów - Symulacja (0 FPS)", None, None)
 glfw.make_context_current(window)
 
@@ -67,6 +72,15 @@ def mouse_button_callback(window, button, action, mods):
 
 
 def key_callback(window, key, scancode, action, mods):
+    global global_intensity
+    if key == glfw.KEY_KP_ADD and action == glfw.RELEASE:
+        global_intensity += 10
+        if global_intensity > 100:
+            global_intensity = 100
+    if key == glfw.KEY_KP_SUBTRACT and action == glfw.RELEASE:
+        global_intensity -= 10
+        if global_intensity < 0:
+            global_intensity = 0
     if key == glfw.KEY_KP_ADD and action == glfw.RELEASE:
         print("Wcisnalem!")
     if key == glfw.KEY_SPACE and action == glfw.PRESS:
@@ -91,7 +105,7 @@ while not glfw.window_should_close(window):
 
     if current_time - previous_time >= 1.0:
         title = "Crowd Simulation ( " + str(frame_count) + " FPS | Number Of Agents: " + str(
-            len(agents.agent_list)) + " )"
+            len(agents.agent_list)) + " )" + " intensity: " + str(global_intensity)
         glfw.set_window_title(window, title)
         frame_count = 0
         previous_time = current_time
@@ -124,14 +138,14 @@ while not glfw.window_should_close(window):
     glfw.swap_buffers(window)
 
     intensity = randint(0, 100)
-    if intensity < 40:
+    if intensity < global_intensity:
         pos = [randint(50, 99), 98]
         which_map = randint(0, 1)
-        agents.add_new(pos, 33.0, [randint(0, 255) / 255, randint(0, 255) / 255, randint(0, 255) / 255], which_map)
+        agents.add_new(pos, 33.0, [.0, .0, .9], which_map)
 
         pos = [randint(2, 90), 2]
         which_map = randint(2, 3)
-        agents.add_new(pos, 33.0, [randint(0, 255) / 255, randint(0, 255) / 255, randint(0, 255) / 255], which_map)
+        agents.add_new(pos, 33.0, [.0, .0, .9], which_map)
 
 mazeTexture.release()
 glfw.terminate()

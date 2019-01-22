@@ -1,7 +1,7 @@
 from OpenGL.GL import *
 from math import *
-#from model.gradient_agent.AgentGradient import Agent
-from model.agent.Agent import Agent
+from model.gradient_agent.AgentGradient import Agent
+#from model.agent.Agent import Agent
 
 class AgentGfx:
     def __init__(self, position: [float, float], map_position: [int, int], angle: float, color: [float, float, float],
