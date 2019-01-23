@@ -1,39 +1,46 @@
 # CrowdMovmentSimulation
-  Simple real-time agent based simulation of crowd movment.
+  Simple real-time agent-based simulation of crowd movement.
   
  ## Implemented models:
-  * Discrete preprocessed shorthets path agent movement
+  * Discrete preprocessed shortest path agent movement
   * Discrete gradient based agent movement
 
 ## What do you need?
-  * System supporting OpenGL (Almost any now a days)
+  * System supporting OpenGL (Almost any nowadays)
   * Python interpreter 
 
 ## Getting Started
-  1.Clone repository to youre machine ' git clone repository_url ' 
+  1. Clone repository to your machine 
   
-  2.Install required python packages
+     git clone repository_url
   
-  3.You should be ready to go now! run main.py from projrct root
-
+  2. Install required python packages
+  
+      pip install -r requirements.txt
+  
+  3. You should be ready to go now! run gradient_main.py from project root (Linux)
+  
+     ./gradient_main.py
+  
+          
 ## Project Goal
-  Goal of the project was to showcase and test diffrent methods of crowd simulation. We wanted to implement few diffrent methods compere one to anpther and at the end compere the simulation with real world crowd behaviour. 
+  The goal of the project was to showcase and test different methods of crowd simulation. We wanted to implement few different methods, compare one to another and at the end compare them with real-world crowd behavior. 
 
 ## Result
-  * For now there are two diffrent discrete simulation methds implemented, presenting difffent aprouch to the subject.
-  * Both methods are really qucik. 
-  * Gradient based model gave much more belivble results as far as the agent bhaviur goes. 
-  * Worth noting is that model paramters have a huge impact on simulation results.
+  * Now there are two different discrete simulation methods implemented, presenting a different approach to the subject.
+  * Both methods are really quick. 
+  * Gradient-based model gave much more believable results as far as the agent behavior goes. 
+  * Worth noting is model parameters have a huge impact on simulation results.
 
 ## Future
-  Project is in constatant development.
+  The project is in constant development.
   We plan to:
-  * Do more testing with diffrent parameters
-  * Improve the presentation ascpect of simulation
-  * Opitmize simulations and visulisation speed
+  * Do more testing with different parameters
+  * Improve the presentation aspects
+  * Optimize simulations and visualization speed
   * Add GUI with tools for easier testing
   * Add map creator
-  * Add diffrent simulation models (We are specially intrested in adding a contiunues model)
+  * Add different simulation models (We are especially interested in adding a continuous model)
   
 ### Built Using
   * PyOpenGL
@@ -45,6 +52,3 @@
 ### License
 
 ## Acknowledgments
-
-
-
