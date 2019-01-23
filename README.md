@@ -33,7 +33,7 @@
   * Worth noting is model parameters have a huge impact on simulation results.
 
 ## Future
-  The project is in constant development.
+  **The project is in constant development.**
   We plan to:
   * Do more testing with different parameters
   * Improve the presentation aspects
@@ -49,6 +49,15 @@
 
 ## Authors
 
+* **Miłosz Blasiak**  [mblasiak](https://github.com/mblasiak)
+* **Piotr Kędra**     [potrkedra](https://github.com/PiotrKedra)
+* **Mateusz Pitura**  [Piturzasty](https://github.com/Piturzasty)
+
 ### License
 
 ## Acknowledgments
+*A Cellular Automaton Model for Crowd Movement and Egress Simulation (Hubert Ludwig Klüpfel)
+*A Simple and Realistic Pedestrian Model for Crowd Simulation and Application (Wonho Kang and Youngnam Han )
+*Simulation of Pedestrian Crowds in Normal and Evacuation Situations (Dirk Helbing , Illes J. Farkas , Peter Molnar , and Tamas Vicsek )
+*Directing Crowd Simulations Using Navigation Fields (Sachin Patil,Jur van den Berg,Sean Curtis,Ming Lin,Dinesh Manocha)
+
