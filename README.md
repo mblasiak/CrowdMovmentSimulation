@@ -1,5 +1,6 @@
 # CrowdMovmentSimulation
   Simple real-time agent-based simulation of crowd movement.
+  ![ScreenShot](sim.png)
   
  ## Implemented models:
   * Discrete preprocessed shortest path agent movement
