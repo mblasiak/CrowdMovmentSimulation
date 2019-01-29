@@ -44,8 +44,8 @@
   * Add different simulation models (We are especially interested in adding a continuous model)
   
 ## New map generating
-  If you want generate your own map you can do using model.environment.environment.direction_map function.
-  Our example can be found in resources.create_map_100x100. (For map greater than 100x100 it takes a while so don't worry, it works)
+  If you want to generate your own map do it by using model.environment.environment.direction_map function.
+  Our example can be found in resources.create_map_100x100. (For map greater than 100x100 it takes a while, so don't worry, it works)
   
 ### Built Using
   * PyOpenGL
